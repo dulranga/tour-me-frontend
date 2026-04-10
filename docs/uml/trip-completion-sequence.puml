@@ -1,0 +1,17 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title Sequence Diagram: Trip Completion and Rating
+
+actor Tourist
+participant System
+participant Driver
+
+Tourist -> System: View Trip Status (Completed)
+System --> Tourist: Confirm Completion
+Tourist -> System: Rate Driver
+Tourist -> System: Provide Feedback
+System --> Driver: Notify New Rating/Feedback
+Driver -> System: View Ratings/Feedback
+@enduml

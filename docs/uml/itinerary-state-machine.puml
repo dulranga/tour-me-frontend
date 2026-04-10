@@ -1,0 +1,25 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title State Machine Diagram: Itinerary Lifecycle
+
+[*] --> Draft : Create Itinerary
+Draft --> Submitted : Submit for Bids
+Submitted --> OpenForBids : Published
+OpenForBids --> Bidding : Receive Bids
+Bidding --> Accepted : Select Driver / Driver Accepts
+Accepted --> InProgress : Trip Starts
+InProgress --> Completed : Trip Ends
+Completed --> Rated : Provide Rating/Feedback
+Rated --> Archived
+OpenForBids --> Cancelled : Cancel Before Selection
+Bidding --> Cancelled : Cancel Before Selection
+Accepted --> Disputed : Report Dispute
+Disputed --> Resolved : Admin Resolves
+Resolved --> Completed
+Resolved --> Cancelled
+[*] --> Cancelled
+Cancelled --> Archived
+Archived --> [*]
+@enduml

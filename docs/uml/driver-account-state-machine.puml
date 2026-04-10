@@ -1,0 +1,20 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title State Machine Diagram: Driver Account
+
+[*] --> Registered : Register
+Registered --> PendingVerification : Upload Documents
+PendingVerification --> Approved : Admin Verifies/Approves
+PendingVerification --> Rejected : Admin Rejects
+Approved --> Active : Available
+Active --> Suspended : Admin Suspends
+Active --> Banned : Admin Bans
+Suspended --> Active : Reinstate
+Rejected --> Registered : Revise Documents
+Banned --> [*]
+Suspended --> Banned
+Active --> Inactive : Update Availability to Unavailable
+Inactive --> Active : Update to Available
+@enduml

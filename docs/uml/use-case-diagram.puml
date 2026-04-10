@@ -1,0 +1,90 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam actorStyle awesome
+
+left to right direction
+
+actor Tourist as T
+actor Driver as D
+actor Administrator as A
+
+rectangle "Tour Me System" {
+
+  usecase "Register and Login" as UC1
+  usecase "Manage Profile" as UC2
+  usecase "Create Itinerary" as UC3
+  usecase "Submit Itinerary for Bids" as UC4
+  usecase "View Estimated Distance/Duration" as UC5
+  usecase "View Bids" as UC6
+  usecase "Compare Bids" as UC7
+  usecase "Select Driver" as UC8
+  usecase "View Trip Status" as UC9
+  usecase "Rate Driver" as UC10
+  usecase "Provide Feedback" as UC11
+  usecase "View Driver Ratings/Feedback" as UC12
+  usecase "Receive Notifications" as UC13
+  usecase "View Vehicle Details" as UC14
+  usecase "Communicate with Driver" as UC15
+  usecase "Cancel Trip Request" as UC16
+
+  usecase "Manage Vehicle Details" as UC17
+  usecase "Upload Verification Documents" as UC18
+  usecase "View Available Itineraries" as UC19
+  usecase "View Trip Details" as UC20
+  usecase "Submit Bid" as UC21
+  usecase "View Bid Status" as UC22
+  usecase "Accept/Decline Trip" as UC23
+  usecase "Update Availability" as UC24
+
+  usecase "Manage Tourist Accounts" as UC25
+  usecase "Manage Driver Accounts" as UC26
+  usecase "Approve/Reject Driver" as UC27
+  usecase "Verify Documents" as UC28
+  usecase "Ban/Suspend Users" as UC29
+  usecase "View All Trips/Bids" as UC30
+  usecase "Moderate Feedback/Ratings" as UC31
+  usecase "Monitor System Activity" as UC32
+  usecase "Resolve Disputes" as UC33
+}
+
+T --> UC1
+T --> UC2
+T --> UC3
+T --> UC4
+T --> UC5
+T --> UC6
+T --> UC7
+T --> UC8
+T --> UC9
+T --> UC10
+T --> UC11
+T --> UC12
+T --> UC13
+T --> UC14
+T --> UC15
+T --> UC16
+
+D --> UC1
+D --> UC2
+D --> UC17
+D --> UC18
+D --> UC19
+D --> UC20
+D --> UC21
+D --> UC22
+D --> UC23
+D --> UC13
+D --> UC24
+
+A --> UC1
+A --> UC25
+A --> UC26
+A --> UC27
+A --> UC28
+A --> UC29
+A --> UC30
+A --> UC31
+A --> UC32
+A --> UC33
+@enduml

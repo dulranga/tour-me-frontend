@@ -1,0 +1,18 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title State Machine Diagram: Bid Lifecycle
+
+[*] --> Submitted : Submit Bid
+Submitted --> Pending : Awaiting Tourist Selection
+Pending --> Accepted : Selected by Tourist
+Accepted --> Confirmed : Driver Accepts
+Confirmed --> Declined : Driver Declines
+Accepted --> Declined : Driver Declines
+Pending --> Rejected : Not Selected / Itinerary Cancelled
+Confirmed --> Completed : Trip Completes
+Completed --> [*]
+Declined --> [*]
+Rejected --> [*]
+@enduml

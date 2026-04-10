@@ -1,0 +1,24 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title Activity Diagram: Administrator Managing Users
+
+start
+:Login;
+:View/Manage Tourist Accounts;
+:View/Manage Driver Accounts;
+:View Driver Documents;
+:Verify Documents;
+if (Valid?) then (yes)
+:Approve Driver;
+else (no)
+:Reject Driver;
+endif
+:Ban/Suspend Users (if violations);
+:View All Trips/Bids;
+:Moderate Feedback/Ratings;
+:Monitor System Activity;
+:Resolve Disputes;
+stop
+@enduml

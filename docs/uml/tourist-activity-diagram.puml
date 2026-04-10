@@ -1,0 +1,26 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title Activity Diagram: Tourist Creating and Submitting Itinerary
+
+start
+:Register/Login;
+:Manage Profile;
+:Create Itinerary\n- Add Multiple Destinations\n- Add Overnight Stays\n- Set Travel Dates;
+:View Estimated Distance/Duration;
+:Submit Itinerary for Bids;
+:Receive Notifications for New Bids;
+:View Bids;
+:Compare Bids\n- Price\n- Driver Details\n- Vehicle Details;
+:Select Driver;
+:Communicate with Driver;
+:View Trip Status;
+if (Trip Completed?) then (yes)
+:Rate Driver;
+:Provide Feedback;
+else (no)
+:Cancel Trip (if before selection);
+endif
+stop
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title Sequence Diagram: Tourist Submitting Itinerary and Receiving Bids
+
+actor Tourist
+participant System
+participant Driver
+
+Tourist -> System: Login
+System --> Tourist: Authenticated
+Tourist -> System: Create Itinerary (Destinations, Dates, Stays)
+System --> Tourist: Itinerary Created, Estimated Distance/Duration
+Tourist -> System: Submit for Bids
+System --> Driver: Notify Available Itinerary
+Driver -> System: View Itinerary Details
+Driver -> System: Submit Bid (Price, Vehicle Details)
+System --> Tourist: Notify New Bid
+Tourist -> System: View/Compare Bids
+Tourist -> System: Select Bid/Driver
+System --> Driver: Notify Bid Accepted
+Driver -> System: Accept Trip
+System --> Tourist: Trip Accepted, Contact Revealed
+Tourist -> Driver: Communicate via Messaging
+@enduml

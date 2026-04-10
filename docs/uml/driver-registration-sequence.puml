@@ -1,0 +1,23 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title Sequence Diagram: Driver Registration and Verification
+
+actor Driver
+participant System
+participant Administrator
+
+Driver -> System: Register (Profile, Vehicle Details)
+Driver -> System: Upload Documents (License, Registration)
+System --> Administrator: Notify New Driver Registration
+Administrator -> System: Login
+Administrator -> System: View Driver Accounts/Documents
+Administrator -> System: Verify Documents
+alt Valid Documents
+System --> Driver: Account Approved/Activated
+else Invalid
+System --> Driver: Rejection Notification
+Driver -> System: Revise/Upload New Documents
+end
+@enduml

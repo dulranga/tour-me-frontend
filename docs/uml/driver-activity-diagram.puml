@@ -1,0 +1,27 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title Activity Diagram: Driver Bidding Process
+
+start
+:Register/Login;
+:Manage Profile;
+:Manage Vehicle Details;
+:Upload Verification Documents;
+:Wait for Admin Verification;
+if (Approved?) then (yes)
+:Update Availability;
+:View Available Itineraries;
+:View Trip Details\n- Destinations\n- Estimated Distance/Duration;
+:Submit Bid (Price Quotation);
+:View Bid Status;
+:Receive Notification if Bid Accepted;
+:Accept/Decline Trip;
+:Communicate with Tourist;
+:View Ratings/Feedback;
+stop
+else (no)
+:Revise Documents;
+endif
+@enduml

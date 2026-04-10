@@ -1,0 +1,113 @@
+@startuml
+' ===== Skin / Style (optional - makes it look cleaner) =====
+skinparam monochrome true
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam stereotypeCBackgroundColor White
+skinparam classFontStyle italic bold
+
+' ===== Interfaces =====
+interface IAuthenticable {
+  +login()
+  +logout()
+}
+
+interface IReviewable {
+  +getRating()
+  +addReview()
+}
+
+' ===== Abstract base class =====
+abstract class User {
+  +int userId
+  +String name
+  +String email
+  +String passwordHash
+  +login()
+  +logout()
+}
+
+' ===== Concrete classes =====
+class Tourist {
+  +createItinerary()
+  +acceptBid()
+}
+
+class Driver {
+  +String vehicleDetails
+  +placeBid()
+  +updateLocation()
+}
+
+class Administrator {
+  +verifyDriver()
+  +manageUsers()
+}
+
+class Itinerary {
+  +int itineraryId
+  +String pickupLocation
+  +String destination
+  +String status
+}
+
+class Bid {
+  +int bidId
+  +double amount
+  +String status
+}
+
+class Review {
+  +int reviewId
+  +int rating
+  +String comment
+}
+
+class Payment {
+  +int paymentId
+  +double amount
+  +String status
+  +processPayment()
+}
+
+class BiddingSystem {
+  +List<Itinerary> itineraries
+  +List<Bid> bids
+  +trackItinerary()
+  +processBid()
+}
+
+' ===== Inheritance (generalization) =====
+User <|-- Tourist
+User <|-- Driver
+User <|-- Administrator
+
+' ===== Interface realizations (implementation) =====
+Tourist ..|> IAuthenticable
+Tourist ..|> IReviewable
+
+Driver ..|> IAuthenticable
+Driver ..|> IReviewable
+
+' Note: Administrator usually does NOT implement IReviewable
+
+' ===== Associations =====
+Tourist "1" -- "0..*" Itinerary   : creates
+Itinerary "1" -- "0..*" Bid        : receives
+Driver "1"    -- "0..*" Bid        : places
+Bid "1"       -- "0..1" Payment    : results in
+
+Tourist "1"   -- "0..*" Review     : writes
+Driver "1"    -- "0..*" Review     : receives
+
+Administrator "1" -- "*" Tourist   : manages
+Administrator "1" -- "*" Driver    : manages
+
+BiddingSystem "1" -- "*" Itinerary : tracks
+BiddingSystem "1" -- "*" Bid       : processes
+
+' Optional: stronger composition semantics (uncomment if desired)
+' Itinerary *-- "0..*" Bid   : contains
+' Bid       *-- "0..1" Payment : triggers
+
+@enduml

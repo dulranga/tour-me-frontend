@@ -44,6 +44,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     select: (state) => state.location.pathname,
   })
   const isAuthRoute = pathname.startsWith('/auth')
+  const isDashboardRoute = pathname.startsWith('/dashboard')
+  const hidePublicShell = isAuthRoute || isDashboardRoute
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -52,9 +54,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
-        {isAuthRoute ? null : <Header />}
+        {hidePublicShell ? null : <Header />}
         {children}
-        {isAuthRoute ? null : <Footer />}
+        {hidePublicShell ? null : <Footer />}
         <TanStackDevtools
           config={{
             position: 'bottom-right',

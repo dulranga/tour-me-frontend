@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DashboardAdminRouteImport } from './routes/dashboard/admin'
 import { Route as Auth_layoutRouteImport } from './routes/auth/__layout'
 import { Route as DashboardTouristIndexRouteImport } from './routes/dashboard/tourist/index'
 import { Route as DashboardDriverIndexRouteImport } from './routes/dashboard/driver/index'
@@ -50,11 +49,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardAdminRoute = DashboardAdminRouteImport.update({
-  id: '/dashboard/admin',
-  path: '/dashboard/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const Auth_layoutRoute = Auth_layoutRouteImport.update({
   id: '/auth/__layout',
   path: '/auth',
@@ -71,9 +65,9 @@ const DashboardDriverIndexRoute = DashboardDriverIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardAdminIndexRoute = DashboardAdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardAdminRoute,
+  id: '/dashboard/admin/',
+  path: '/dashboard/admin/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardTouristTripsRoute = DashboardTouristTripsRouteImport.update({
   id: '/dashboard/tourist/trips',
@@ -136,34 +130,34 @@ const DashboardDriverBidsRoute = DashboardDriverBidsRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardAdminTripsRoute = DashboardAdminTripsRouteImport.update({
-  id: '/trips',
-  path: '/trips',
-  getParentRoute: () => DashboardAdminRoute,
+  id: '/dashboard/admin/trips',
+  path: '/dashboard/admin/trips',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardAdminTouristsRoute = DashboardAdminTouristsRouteImport.update({
-  id: '/tourists',
-  path: '/tourists',
-  getParentRoute: () => DashboardAdminRoute,
+  id: '/dashboard/admin/tourists',
+  path: '/dashboard/admin/tourists',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardAdminFeedbackRoute = DashboardAdminFeedbackRouteImport.update({
-  id: '/feedback',
-  path: '/feedback',
-  getParentRoute: () => DashboardAdminRoute,
+  id: '/dashboard/admin/feedback',
+  path: '/dashboard/admin/feedback',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardAdminDriversRoute = DashboardAdminDriversRouteImport.update({
-  id: '/drivers',
-  path: '/drivers',
-  getParentRoute: () => DashboardAdminRoute,
+  id: '/dashboard/admin/drivers',
+  path: '/dashboard/admin/drivers',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardAdminDisputesRoute = DashboardAdminDisputesRouteImport.update({
-  id: '/disputes',
-  path: '/disputes',
-  getParentRoute: () => DashboardAdminRoute,
+  id: '/dashboard/admin/disputes',
+  path: '/dashboard/admin/disputes',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardAdminBidsRoute = DashboardAdminBidsRouteImport.update({
-  id: '/bids',
-  path: '/bids',
-  getParentRoute: () => DashboardAdminRoute,
+  id: '/dashboard/admin/bids',
+  path: '/dashboard/admin/bids',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthTouristRegisterRoute = AuthTouristRegisterRouteImport.update({
   id: '/auth/tourist/register',
@@ -200,7 +194,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof Auth_layoutRoute
-  '/dashboard/admin': typeof DashboardAdminRouteWithChildren
   '/auth/admin/login': typeof AuthAdminLoginRoute
   '/auth/admin/register': typeof AuthAdminRegisterRoute
   '/auth/driver/login': typeof AuthDriverLoginRoute
@@ -264,7 +257,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth/__layout': typeof Auth_layoutRoute
-  '/dashboard/admin': typeof DashboardAdminRouteWithChildren
   '/auth/admin/login': typeof AuthAdminLoginRoute
   '/auth/admin/register': typeof AuthAdminRegisterRoute
   '/auth/driver/login': typeof AuthDriverLoginRoute
@@ -298,7 +290,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
-    | '/dashboard/admin'
     | '/auth/admin/login'
     | '/auth/admin/register'
     | '/auth/driver/login'
@@ -361,7 +352,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth/__layout'
-    | '/dashboard/admin'
     | '/auth/admin/login'
     | '/auth/admin/register'
     | '/auth/driver/login'
@@ -394,13 +384,18 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   Auth_layoutRoute: typeof Auth_layoutRoute
-  DashboardAdminRoute: typeof DashboardAdminRouteWithChildren
   AuthAdminLoginRoute: typeof AuthAdminLoginRoute
   AuthAdminRegisterRoute: typeof AuthAdminRegisterRoute
   AuthDriverLoginRoute: typeof AuthDriverLoginRoute
   AuthDriverRegisterRoute: typeof AuthDriverRegisterRoute
   AuthTouristLoginRoute: typeof AuthTouristLoginRoute
   AuthTouristRegisterRoute: typeof AuthTouristRegisterRoute
+  DashboardAdminBidsRoute: typeof DashboardAdminBidsRoute
+  DashboardAdminDisputesRoute: typeof DashboardAdminDisputesRoute
+  DashboardAdminDriversRoute: typeof DashboardAdminDriversRoute
+  DashboardAdminFeedbackRoute: typeof DashboardAdminFeedbackRoute
+  DashboardAdminTouristsRoute: typeof DashboardAdminTouristsRoute
+  DashboardAdminTripsRoute: typeof DashboardAdminTripsRoute
   DashboardDriverBidsRoute: typeof DashboardDriverBidsRoute
   DashboardDriverMarketplaceRoute: typeof DashboardDriverMarketplaceRoute
   DashboardDriverMessagesRoute: typeof DashboardDriverMessagesRoute
@@ -412,6 +407,7 @@ export interface RootRouteChildren {
   DashboardTouristMessagesRoute: typeof DashboardTouristMessagesRoute
   DashboardTouristReceiptsRoute: typeof DashboardTouristReceiptsRoute
   DashboardTouristTripsRoute: typeof DashboardTouristTripsRoute
+  DashboardAdminIndexRoute: typeof DashboardAdminIndexRoute
   DashboardDriverIndexRoute: typeof DashboardDriverIndexRoute
   DashboardTouristIndexRoute: typeof DashboardTouristIndexRoute
 }
@@ -430,13 +426,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/admin': {
-      id: '/dashboard/admin'
-      path: '/dashboard/admin'
-      fullPath: '/dashboard/admin'
-      preLoaderRoute: typeof DashboardAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/__layout': {
@@ -462,10 +451,10 @@ declare module '@tanstack/react-router' {
     }
     '/dashboard/admin/': {
       id: '/dashboard/admin/'
-      path: '/'
+      path: '/dashboard/admin'
       fullPath: '/dashboard/admin/'
       preLoaderRoute: typeof DashboardAdminIndexRouteImport
-      parentRoute: typeof DashboardAdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/tourist/trips': {
       id: '/dashboard/tourist/trips'
@@ -546,45 +535,45 @@ declare module '@tanstack/react-router' {
     }
     '/dashboard/admin/trips': {
       id: '/dashboard/admin/trips'
-      path: '/trips'
+      path: '/dashboard/admin/trips'
       fullPath: '/dashboard/admin/trips'
       preLoaderRoute: typeof DashboardAdminTripsRouteImport
-      parentRoute: typeof DashboardAdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/admin/tourists': {
       id: '/dashboard/admin/tourists'
-      path: '/tourists'
+      path: '/dashboard/admin/tourists'
       fullPath: '/dashboard/admin/tourists'
       preLoaderRoute: typeof DashboardAdminTouristsRouteImport
-      parentRoute: typeof DashboardAdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/admin/feedback': {
       id: '/dashboard/admin/feedback'
-      path: '/feedback'
+      path: '/dashboard/admin/feedback'
       fullPath: '/dashboard/admin/feedback'
       preLoaderRoute: typeof DashboardAdminFeedbackRouteImport
-      parentRoute: typeof DashboardAdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/admin/drivers': {
       id: '/dashboard/admin/drivers'
-      path: '/drivers'
+      path: '/dashboard/admin/drivers'
       fullPath: '/dashboard/admin/drivers'
       preLoaderRoute: typeof DashboardAdminDriversRouteImport
-      parentRoute: typeof DashboardAdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/admin/disputes': {
       id: '/dashboard/admin/disputes'
-      path: '/disputes'
+      path: '/dashboard/admin/disputes'
       fullPath: '/dashboard/admin/disputes'
       preLoaderRoute: typeof DashboardAdminDisputesRouteImport
-      parentRoute: typeof DashboardAdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/admin/bids': {
       id: '/dashboard/admin/bids'
-      path: '/bids'
+      path: '/dashboard/admin/bids'
       fullPath: '/dashboard/admin/bids'
       preLoaderRoute: typeof DashboardAdminBidsRouteImport
-      parentRoute: typeof DashboardAdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/auth/tourist/register': {
       id: '/auth/tourist/register'
@@ -631,41 +620,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface DashboardAdminRouteChildren {
-  DashboardAdminBidsRoute: typeof DashboardAdminBidsRoute
-  DashboardAdminDisputesRoute: typeof DashboardAdminDisputesRoute
-  DashboardAdminDriversRoute: typeof DashboardAdminDriversRoute
-  DashboardAdminFeedbackRoute: typeof DashboardAdminFeedbackRoute
-  DashboardAdminTouristsRoute: typeof DashboardAdminTouristsRoute
-  DashboardAdminTripsRoute: typeof DashboardAdminTripsRoute
-  DashboardAdminIndexRoute: typeof DashboardAdminIndexRoute
-}
-
-const DashboardAdminRouteChildren: DashboardAdminRouteChildren = {
-  DashboardAdminBidsRoute: DashboardAdminBidsRoute,
-  DashboardAdminDisputesRoute: DashboardAdminDisputesRoute,
-  DashboardAdminDriversRoute: DashboardAdminDriversRoute,
-  DashboardAdminFeedbackRoute: DashboardAdminFeedbackRoute,
-  DashboardAdminTouristsRoute: DashboardAdminTouristsRoute,
-  DashboardAdminTripsRoute: DashboardAdminTripsRoute,
-  DashboardAdminIndexRoute: DashboardAdminIndexRoute,
-}
-
-const DashboardAdminRouteWithChildren = DashboardAdminRoute._addFileChildren(
-  DashboardAdminRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   Auth_layoutRoute: Auth_layoutRoute,
-  DashboardAdminRoute: DashboardAdminRouteWithChildren,
   AuthAdminLoginRoute: AuthAdminLoginRoute,
   AuthAdminRegisterRoute: AuthAdminRegisterRoute,
   AuthDriverLoginRoute: AuthDriverLoginRoute,
   AuthDriverRegisterRoute: AuthDriverRegisterRoute,
   AuthTouristLoginRoute: AuthTouristLoginRoute,
   AuthTouristRegisterRoute: AuthTouristRegisterRoute,
+  DashboardAdminBidsRoute: DashboardAdminBidsRoute,
+  DashboardAdminDisputesRoute: DashboardAdminDisputesRoute,
+  DashboardAdminDriversRoute: DashboardAdminDriversRoute,
+  DashboardAdminFeedbackRoute: DashboardAdminFeedbackRoute,
+  DashboardAdminTouristsRoute: DashboardAdminTouristsRoute,
+  DashboardAdminTripsRoute: DashboardAdminTripsRoute,
   DashboardDriverBidsRoute: DashboardDriverBidsRoute,
   DashboardDriverMarketplaceRoute: DashboardDriverMarketplaceRoute,
   DashboardDriverMessagesRoute: DashboardDriverMessagesRoute,
@@ -677,6 +647,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardTouristMessagesRoute: DashboardTouristMessagesRoute,
   DashboardTouristReceiptsRoute: DashboardTouristReceiptsRoute,
   DashboardTouristTripsRoute: DashboardTouristTripsRoute,
+  DashboardAdminIndexRoute: DashboardAdminIndexRoute,
   DashboardDriverIndexRoute: DashboardDriverIndexRoute,
   DashboardTouristIndexRoute: DashboardTouristIndexRoute,
 }

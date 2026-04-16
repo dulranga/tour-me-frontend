@@ -10,6 +10,18 @@ import { getDriverOverviewData } from '#/lib/api/dashboard'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { Badge } from '#/components/ui/badge'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '#/components/ui/dialog'
+import { Input } from '#/components/ui/input'
+import { Label } from '#/components/ui/label'
 
 export const Route = createFileRoute('/dashboard/driver/')({
   component: DriverDashboard,
@@ -35,9 +47,76 @@ function DriverDashboard() {
           <Badge variant="success" className="h-9 px-3">
             Available
           </Badge>
-          <Button size="sm" variant="outline" disabled>
-            Toggle availability
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline">
+                Set available
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Set availability</DialogTitle>
+                <DialogDescription>
+                  Mark your account as available for new bids.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="driver-available-id">Driver ID</Label>
+                  <Input id="driver-available-id" placeholder="DRV-1001" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="driver-available-status">Status</Label>
+                  <Input id="driver-available-status" value="Active" readOnly />
+                </div>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline" type="button">
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="button">Set available</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline">
+                Set unavailable
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Set unavailable</DialogTitle>
+                <DialogDescription>
+                  Pause new bids while you are off duty.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="driver-unavailable-id">Driver ID</Label>
+                  <Input id="driver-unavailable-id" placeholder="DRV-1001" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="driver-unavailable-status">Status</Label>
+                  <Input
+                    id="driver-unavailable-status"
+                    value="Inactive"
+                    readOnly
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline" type="button">
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="button">Set unavailable</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </>
       }
     >
@@ -74,9 +153,46 @@ function DriverDashboard() {
             <div className="rounded-md border border-border-subtle bg-bg-base/40 p-3">
               Respond to bids within 24 hours to improve acceptance rate.
             </div>
-            <Button className="w-full" disabled>
-              Update documents
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="w-full">Update documents</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Update verification documents</DialogTitle>
+                  <DialogDescription>
+                    Upload the latest license and registration files.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="driver-license-file">Driver license</Label>
+                    <Input id="driver-license-file" type="file" />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="driver-registration-file">
+                      Vehicle registration
+                    </Label>
+                    <Input id="driver-registration-file" type="file" />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="driver-doc-notes">Notes</Label>
+                    <Input
+                      id="driver-doc-notes"
+                      placeholder="Add optional notes"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline" type="button">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <Button type="button">Upload documents</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </CardContent>
         </Card>
       </section>

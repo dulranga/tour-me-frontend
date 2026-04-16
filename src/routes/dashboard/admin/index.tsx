@@ -9,6 +9,18 @@ import { adminNavItems } from '#/components/dashboard/navigation'
 import { getAdminOverviewData } from '#/lib/api/dashboard'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '#/components/ui/dialog'
+import { Input } from '#/components/ui/input'
+import { Label } from '#/components/ui/label'
 
 export const Route = createFileRoute('/dashboard/admin/')({
   component: AdminDashboard,
@@ -31,9 +43,106 @@ function AdminDashboard() {
       navItems={adminNavItems}
       actions={
         <>
-          <Button size="sm" disabled>
-            Review drivers
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm">View driver queue</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Driver verification queue</DialogTitle>
+                <DialogDescription>
+                  Review pending driver submissions.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="admin-queue-status">Status filter</Label>
+                  <Input id="admin-queue-status" placeholder="Pending" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="admin-queue-driver-id">Driver ID</Label>
+                  <Input id="admin-queue-driver-id" placeholder="DRV-1001" />
+                </div>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline" type="button">
+                    Close
+                  </Button>
+                </DialogClose>
+                <Button type="button">Refresh queue</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline">
+                Approve driver
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Approve driver</DialogTitle>
+                <DialogDescription>
+                  Move a verified driver to approved status.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="admin-approve-driver-id">Driver ID</Label>
+                  <Input id="admin-approve-driver-id" placeholder="DRV-1001" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="admin-approve-status">Status</Label>
+                  <Input id="admin-approve-status" value="Approved" readOnly />
+                </div>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline" type="button">
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="button">Approve</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline">
+                Reject driver
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Reject driver</DialogTitle>
+                <DialogDescription>
+                  Request revisions for incomplete documentation.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="admin-reject-driver-id">Driver ID</Label>
+                  <Input id="admin-reject-driver-id" placeholder="DRV-1001" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="admin-reject-reason">Reason</Label>
+                  <Input
+                    id="admin-reject-reason"
+                    placeholder="Missing insurance proof"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline" type="button">
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="button">Reject</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <Button size="sm" variant="outline" disabled>
             View disputes
           </Button>

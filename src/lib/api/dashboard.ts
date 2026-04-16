@@ -7,6 +7,7 @@ export type DashboardStatusVariant =
   | 'destructive'
 
 export type DashboardListItem = {
+  id?: string
   title: string
   subtitle?: string
   meta?: string

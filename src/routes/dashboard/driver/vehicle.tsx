@@ -25,6 +25,7 @@ export const Route = createFileRoute('/dashboard/driver/vehicle')({
 
 function DriverVehiclePage() {
   const data = getDriverVehicleData()
+  const vehicleDetailKey = 'driver-vehicle-details'
 
   return (
     <DashboardShell
@@ -32,62 +33,6 @@ function DriverVehiclePage() {
       subtitle="Manage vehicle information and maintenance reminders."
       roleLabel="Driver"
       navItems={driverNavItems}
-      actions={
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm">Edit vehicle</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit vehicle details</DialogTitle>
-              <DialogDescription>
-                Update your vehicle profile and compliance data.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="driver-vehicle-name">Vehicle name</Label>
-                <Input id="driver-vehicle-name" placeholder="Toyota Hiace" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="driver-vehicle-plate">Plate number</Label>
-                <Input id="driver-vehicle-plate" placeholder="WP-KB-1234" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="driver-vehicle-seats">Seats</Label>
-                <Input
-                  id="driver-vehicle-seats"
-                  type="number"
-                  placeholder="12"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="driver-vehicle-status">Status</Label>
-                <Input id="driver-vehicle-status" placeholder="Active" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="driver-vehicle-insurance">Insurance</Label>
-                <Input
-                  id="driver-vehicle-insurance"
-                  placeholder="Valid through 2026"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="driver-vehicle-inspection">Last inspection</Label>
-                <Input id="driver-vehicle-inspection" type="date" />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline" type="button">
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button type="button">Save changes</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      }
     >
       <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <Card>
@@ -131,6 +76,36 @@ function DriverVehiclePage() {
                 {data.vehicle.lastInspection}
               </span>
             </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="w-full">Edit vehicle</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit vehicle details</DialogTitle>
+                  <DialogDescription>
+                    Update the vehicle details associated with your account.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor={vehicleDetailKey}>Vehicle details</Label>
+                    <Input
+                      id={vehicleDetailKey}
+                      placeholder="Toyota Prius, 4 seats"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline" type="button">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <Button type="button">Save changes</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </CardContent>
         </Card>
         <DashboardListCard {...data.reminders} />

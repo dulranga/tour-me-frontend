@@ -1,8 +1,11 @@
+import type { ReactNode } from 'react'
+
 import { Badge } from '#/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/components/ui/card'
 import { cn } from '#/lib/utils'
 
 type DashboardListItem = {
+  id?: string
   title: string
   subtitle?: string
   meta?: string
@@ -16,6 +19,8 @@ type DashboardListCardProps = {
   items: DashboardListItem[]
   emptyState?: string
   className?: string
+  headerAction?: ReactNode
+  renderItemActions?: (item: DashboardListItem) => ReactNode
 }
 
 export function DashboardListCard({
@@ -24,12 +29,19 @@ export function DashboardListCard({
   items,
   emptyState,
   className,
+  headerAction,
+  renderItemActions,
 }: DashboardListCardProps) {
   return (
     <Card className={className}>
-      <CardHeader>
-        <CardTitle className="text-lg">{title}</CardTitle>
-        {description ? <CardDescription>{description}</CardDescription> : null}
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <CardTitle className="text-lg">{title}</CardTitle>
+          {description ? (
+            <CardDescription>{description}</CardDescription>
+          ) : null}
+        </div>
+        {headerAction ? <div className="shrink-0">{headerAction}</div> : null}
       </CardHeader>
       <CardContent className="space-y-3">
         {items.length === 0 ? (
@@ -39,12 +51,12 @@ export function DashboardListCard({
         ) : (
           items.map((item) => (
             <div
-              key={`${item.title}-${item.meta ?? ''}`}
+              key={item.id ?? `${item.title}-${item.meta ?? ''}`}
               className={cn(
-                'flex items-start justify-between gap-3 rounded-md border border-border-subtle bg-bg-base/40 p-3'
+                'flex flex-col gap-3 rounded-md border border-border-subtle bg-bg-base/40 p-3'
               )}
             >
-              <div>
+              <div className="space-y-1">
                 <p className="text-sm font-semibold text-text-primary">
                   {item.title}
                 </p>
@@ -56,9 +68,17 @@ export function DashboardListCard({
                 ) : null}
               </div>
               {item.status ? (
-                <Badge variant={item.statusVariant ?? 'secondary'}>
+                <Badge
+                  variant={item.statusVariant ?? 'secondary'}
+                  className="w-fit"
+                >
                   {item.status}
                 </Badge>
+              ) : null}
+              {renderItemActions ? (
+                <div className="flex justify-end gap-2">
+                  {renderItemActions(item)}
+                </div>
               ) : null}
             </div>
           ))

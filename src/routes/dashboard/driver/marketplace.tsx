@@ -24,6 +24,45 @@ export const Route = createFileRoute('/dashboard/driver/marketplace')({
 
 function DriverMarketplacePage() {
   const data = getDriverMarketplaceData()
+  const renderSubmitBidAction = (item: { title: string }) => {
+    const itemKey = item.title.toLowerCase().replace(/\s+/g, '-')
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button size="sm">Submit bid</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Submit bid</DialogTitle>
+            <DialogDescription>
+              Provide a bid amount for {item.title}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor={`marketplace-bid-amount-${itemKey}`}>
+                Bid amount
+              </Label>
+              <Input
+                id={`marketplace-bid-amount-${itemKey}`}
+                type="number"
+                placeholder="0"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="button">Submit bid</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
   return (
     <DashboardShell
@@ -31,65 +70,20 @@ function DriverMarketplacePage() {
       subtitle="Browse itineraries that match your routes and availability."
       roleLabel="Driver"
       navItems={driverNavItems}
-      actions={
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm">Submit bid</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Submit bid</DialogTitle>
-              <DialogDescription>
-                Provide your pricing details for the selected itinerary.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="marketplace-itinerary-id">Itinerary ID</Label>
-                <Input
-                  id="marketplace-itinerary-id"
-                  placeholder="ITIN-0001"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="marketplace-pickup">Pickup location</Label>
-                <Input
-                  id="marketplace-pickup"
-                  placeholder="Colombo Fort"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="marketplace-destination">Destination</Label>
-                <Input
-                  id="marketplace-destination"
-                  placeholder="Galle"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="marketplace-amount">Bid amount</Label>
-                <Input id="marketplace-amount" type="number" placeholder="0" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="marketplace-status">Status</Label>
-                <Input id="marketplace-status" value="Submitted" readOnly />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline" type="button">
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button type="button">Submit bid</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      }
     >
       <section className="grid gap-6 lg:grid-cols-3">
-        <DashboardListCard {...data.matches} />
-        <DashboardListCard {...data.expiringSoon} />
-        <DashboardListCard {...data.newest} />
+        <DashboardListCard
+          {...data.matches}
+          renderItemActions={renderSubmitBidAction}
+        />
+        <DashboardListCard
+          {...data.expiringSoon}
+          renderItemActions={renderSubmitBidAction}
+        />
+        <DashboardListCard
+          {...data.newest}
+          renderItemActions={renderSubmitBidAction}
+        />
       </section>
     </DashboardShell>
   )

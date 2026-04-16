@@ -24,6 +24,61 @@ export const Route = createFileRoute('/dashboard/admin/trips')({
 
 function AdminTripsPage() {
   const data = getAdminTripsData()
+  const renderTripDetailsAction = (item: { title: string }) => {
+    const itemKey = item.title.toLowerCase().replace(/\s+/g, '-')
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button size="sm" variant="outline">
+            View details
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Trip details</DialogTitle>
+            <DialogDescription>
+              Review itinerary details for {item.title}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor={`admin-trip-pickup-${itemKey}`}>
+                Pickup location
+              </Label>
+              <Input
+                id={`admin-trip-pickup-${itemKey}`}
+                placeholder="Pickup location"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor={`admin-trip-destination-${itemKey}`}>
+                Destination
+              </Label>
+              <Input
+                id={`admin-trip-destination-${itemKey}`}
+                placeholder="Destination"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor={`admin-trip-status-${itemKey}`}>Status</Label>
+              <Input
+                id={`admin-trip-status-${itemKey}`}
+                placeholder="ACTIVE"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
+                Close
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
   return (
     <DashboardShell
@@ -31,51 +86,16 @@ function AdminTripsPage() {
       subtitle="Monitor active trips and completion confirmations."
       roleLabel="Admin"
       navItems={adminNavItems}
-      actions={
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm">View trip details</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Trip details</DialogTitle>
-              <DialogDescription>
-                Inspect itinerary status and destinations.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="admin-trip-itinerary-id">Itinerary ID</Label>
-                <Input id="admin-trip-itinerary-id" placeholder="ITIN-0001" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="admin-trip-pickup">Pickup location</Label>
-                <Input id="admin-trip-pickup" placeholder="Colombo Fort" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="admin-trip-destination">Destination</Label>
-                <Input id="admin-trip-destination" placeholder="Galle" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="admin-trip-status">Status</Label>
-                <Input id="admin-trip-status" placeholder="InProgress" />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline" type="button">
-                  Close
-                </Button>
-              </DialogClose>
-              <Button type="button">Refresh details</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      }
     >
       <section className="grid gap-6 lg:grid-cols-2">
-        <DashboardListCard {...data.inProgress} />
-        <DashboardListCard {...data.awaitingConfirmation} />
+        <DashboardListCard
+          {...data.inProgress}
+          renderItemActions={renderTripDetailsAction}
+        />
+        <DashboardListCard
+          {...data.awaitingConfirmation}
+          renderItemActions={renderTripDetailsAction}
+        />
       </section>
     </DashboardShell>
   )

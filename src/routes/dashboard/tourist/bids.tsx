@@ -24,6 +24,49 @@ export const Route = createFileRoute('/dashboard/tourist/bids')({
 
 function TouristBidsPage() {
   const data = getTouristBidsData()
+  const renderBidAction = (item: { title: string }) => {
+    const itemKey = item.title.toLowerCase().replace(/\s+/g, '-')
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button size="sm">Compare bid</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Compare bid</DialogTitle>
+            <DialogDescription>
+              Review amount and status for {item.title}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor={`tourist-bid-amount-${itemKey}`}>Amount</Label>
+              <Input
+                id={`tourist-bid-amount-${itemKey}`}
+                type="number"
+                placeholder="0"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor={`tourist-bid-status-${itemKey}`}>Status</Label>
+              <Input
+                id={`tourist-bid-status-${itemKey}`}
+                placeholder="PENDING"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
+                Close
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
   return (
     <DashboardShell
@@ -31,59 +74,20 @@ function TouristBidsPage() {
       subtitle="Compare offers from verified drivers before you decide."
       roleLabel="Tourist"
       navItems={touristNavItems}
-      actions={
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm">Compare bids</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Compare bids</DialogTitle>
-              <DialogDescription>
-                Review bid pricing and driver details.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="tourist-compare-bid-id">Bid ID</Label>
-                <Input id="tourist-compare-bid-id" placeholder="BID-2040" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="tourist-compare-amount">Amount</Label>
-                <Input
-                  id="tourist-compare-amount"
-                  type="number"
-                  placeholder="0"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="tourist-compare-driver">Driver ID</Label>
-                <Input id="tourist-compare-driver" placeholder="DRV-1001" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="tourist-compare-vehicle">Vehicle details</Label>
-                <Input
-                  id="tourist-compare-vehicle"
-                  placeholder="Toyota Hiace"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline" type="button">
-                  Close
-                </Button>
-              </DialogClose>
-              <Button type="button">Refresh bids</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      }
     >
       <section className="grid gap-6 lg:grid-cols-3">
-        <DashboardListCard {...data.newBids} />
-        <DashboardListCard {...data.expiringSoon} />
-        <DashboardListCard {...data.accepted} />
+        <DashboardListCard
+          {...data.newBids}
+          renderItemActions={renderBidAction}
+        />
+        <DashboardListCard
+          {...data.expiringSoon}
+          renderItemActions={renderBidAction}
+        />
+        <DashboardListCard
+          {...data.accepted}
+          renderItemActions={renderBidAction}
+        />
       </section>
     </DashboardShell>
   )

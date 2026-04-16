@@ -45,7 +45,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   })
   const isAuthRoute = pathname.startsWith('/auth')
   const isDashboardRoute = pathname.startsWith('/dashboard')
-  const hidePublicShell = isAuthRoute || isDashboardRoute
+//   const hidePublicShell = isAuthRoute || isDashboardRoute
+  const hidePublicShell = isAuthRoute 
 
   return (
     <html lang="en" suppressHydrationWarning>

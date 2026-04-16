@@ -24,6 +24,53 @@ export const Route = createFileRoute('/dashboard/driver/verification')({
 
 function DriverVerificationPage() {
   const data = getDriverVerificationData()
+  const renderVerificationAction = (item: { title: string }) => {
+    const itemKey = item.title.toLowerCase().replace(/\s+/g, '-')
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button size="sm" variant="outline">
+            Update details
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update driver details</DialogTitle>
+            <DialogDescription>
+              Update license and vehicle details for {item.title}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor={`driver-license-${itemKey}`}>License number</Label>
+              <Input
+                id={`driver-license-${itemKey}`}
+                placeholder="LIC-000123"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor={`driver-vehicle-${itemKey}`}>
+                Vehicle details
+              </Label>
+              <Input
+                id={`driver-vehicle-${itemKey}`}
+                placeholder="Toyota Prius, 4 seats"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="button">Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
   return (
     <DashboardShell
@@ -31,52 +78,16 @@ function DriverVerificationPage() {
       subtitle="Keep your documents up to date to stay visible."
       roleLabel="Driver"
       navItems={driverNavItems}
-      actions={
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm">Upload documents</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Upload verification documents</DialogTitle>
-              <DialogDescription>
-                Submit updated files for admin review.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="driver-verification-license">Driver license</Label>
-                <Input id="driver-verification-license" type="file" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="driver-verification-registration">
-                  Vehicle registration
-                </Label>
-                <Input id="driver-verification-registration" type="file" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="driver-verification-notes">Notes</Label>
-                <Input
-                  id="driver-verification-notes"
-                  placeholder="Add optional notes"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline" type="button">
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button type="button">Submit documents</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      }
     >
       <section className="grid gap-6 lg:grid-cols-2">
-        <DashboardListCard {...data.documents} />
-        <DashboardListCard {...data.followUps} />
+        <DashboardListCard
+          {...data.documents}
+          renderItemActions={renderVerificationAction}
+        />
+        <DashboardListCard
+          {...data.followUps}
+          renderItemActions={renderVerificationAction}
+        />
       </section>
     </DashboardShell>
   )

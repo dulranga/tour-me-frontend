@@ -24,6 +24,44 @@ export const Route = createFileRoute('/dashboard/tourist/trips')({
 
 function TouristTripsPage() {
   const data = getTouristTripsData()
+  const renderCompletionAction = (item: { title: string }) => {
+    const itemKey = item.title.toLowerCase().replace(/\s+/g, '-')
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button size="sm" variant="outline">
+            Confirm completion
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm trip completion</DialogTitle>
+            <DialogDescription>
+              Mark {item.title} as completed.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor={`tourist-trip-status-${itemKey}`}>Status</Label>
+              <Input
+                id={`tourist-trip-status-${itemKey}`}
+                placeholder="COMPLETED"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="button">Confirm completion</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
   return (
     <DashboardShell
@@ -31,52 +69,13 @@ function TouristTripsPage() {
       subtitle="Monitor upcoming and completed trips with drivers."
       roleLabel="Tourist"
       navItems={touristNavItems}
-      actions={
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm" variant="outline">
-              Confirm completion
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm trip completion</DialogTitle>
-              <DialogDescription>
-                Mark a trip as completed once you arrive.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="tourist-completion-itinerary">Itinerary ID</Label>
-                <Input
-                  id="tourist-completion-itinerary"
-                  placeholder="ITIN-0001"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="tourist-completion-status">Status</Label>
-                <Input
-                  id="tourist-completion-status"
-                  value="Completed"
-                  readOnly
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline" type="button">
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button type="button">Confirm completion</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      }
     >
       <section className="grid gap-6 lg:grid-cols-2">
         <DashboardListCard {...data.upcoming} />
-        <DashboardListCard {...data.past} />
+        <DashboardListCard
+          {...data.past}
+          renderItemActions={renderCompletionAction}
+        />
       </section>
     </DashboardShell>
   )

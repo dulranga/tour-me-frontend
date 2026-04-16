@@ -47,76 +47,6 @@ function DriverDashboard() {
           <Badge variant="success" className="h-9 px-3">
             Available
           </Badge>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="sm" variant="outline">
-                Set available
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Set availability</DialogTitle>
-                <DialogDescription>
-                  Mark your account as available for new bids.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="driver-available-id">Driver ID</Label>
-                  <Input id="driver-available-id" placeholder="DRV-1001" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="driver-available-status">Status</Label>
-                  <Input id="driver-available-status" value="Active" readOnly />
-                </div>
-              </div>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline" type="button">
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <Button type="button">Set available</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="sm" variant="outline">
-                Set unavailable
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Set unavailable</DialogTitle>
-                <DialogDescription>
-                  Pause new bids while you are off duty.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="driver-unavailable-id">Driver ID</Label>
-                  <Input id="driver-unavailable-id" placeholder="DRV-1001" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="driver-unavailable-status">Status</Label>
-                  <Input
-                    id="driver-unavailable-status"
-                    value="Inactive"
-                    readOnly
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline" type="button">
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <Button type="button">Set unavailable</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
         </>
       }
     >
@@ -153,33 +83,42 @@ function DriverDashboard() {
             <div className="rounded-md border border-border-subtle bg-bg-base/40 p-3">
               Respond to bids within 24 hours to improve acceptance rate.
             </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Button className="w-full" variant="outline" disabled>
+                Set available
+              </Button>
+              <Button className="w-full" variant="outline" disabled>
+                Set unavailable
+              </Button>
+            </div>
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="w-full">Update documents</Button>
+                <Button className="w-full">Update driver details</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Update verification documents</DialogTitle>
+                  <DialogTitle>Update driver details</DialogTitle>
                   <DialogDescription>
-                    Upload the latest license and registration files.
+                    Update your license number and vehicle details.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="driver-license-file">Driver license</Label>
-                    <Input id="driver-license-file" type="file" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="driver-registration-file">
-                      Vehicle registration
+                    <Label htmlFor="driver-license-number">
+                      License number
                     </Label>
-                    <Input id="driver-registration-file" type="file" />
+                    <Input
+                      id="driver-license-number"
+                      placeholder="LIC-000123"
+                    />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="driver-doc-notes">Notes</Label>
+                    <Label htmlFor="driver-vehicle-details">
+                      Vehicle details
+                    </Label>
                     <Input
-                      id="driver-doc-notes"
-                      placeholder="Add optional notes"
+                      id="driver-vehicle-details"
+                      placeholder="Toyota Prius, 4 seats"
                     />
                   </div>
                 </div>
@@ -189,7 +128,7 @@ function DriverDashboard() {
                       Cancel
                     </Button>
                   </DialogClose>
-                  <Button type="button">Upload documents</Button>
+                  <Button type="button">Save changes</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

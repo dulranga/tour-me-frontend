@@ -24,6 +24,54 @@ export const Route = createFileRoute('/dashboard/driver/bids')({
 
 function DriverBidsPage() {
   const data = getDriverBidsData()
+  const renderUpdateBidAction = (item: { title: string }) => {
+    const itemKey = item.title.toLowerCase().replace(/\s+/g, '-')
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button size="sm" variant="outline">
+            Update bid
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update bid</DialogTitle>
+            <DialogDescription>
+              Adjust amount or status for {item.title}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor={`driver-bid-amount-${itemKey}`}>
+                Bid amount
+              </Label>
+              <Input
+                id={`driver-bid-amount-${itemKey}`}
+                type="number"
+                placeholder="0"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor={`driver-bid-status-${itemKey}`}>Status</Label>
+              <Input
+                id={`driver-bid-status-${itemKey}`}
+                placeholder="PENDING"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="button">Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
   return (
     <DashboardShell
@@ -31,46 +79,20 @@ function DriverBidsPage() {
       subtitle="Track pending, accepted, and declined bids."
       roleLabel="Driver"
       navItems={driverNavItems}
-      actions={
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm" variant="outline">
-              Update bids
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Refresh bid status</DialogTitle>
-              <DialogDescription>
-                Filter or refresh your bid pipeline.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="driver-bid-id">Bid ID</Label>
-                <Input id="driver-bid-id" placeholder="BID-1024" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="driver-bid-status">Status filter</Label>
-                <Input id="driver-bid-status" placeholder="Pending" />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline" type="button">
-                  Close
-                </Button>
-              </DialogClose>
-              <Button type="button">Refresh</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      }
     >
       <section className="grid gap-6 lg:grid-cols-3">
-        <DashboardListCard {...data.pending} />
-        <DashboardListCard {...data.accepted} />
-        <DashboardListCard {...data.declined} />
+        <DashboardListCard
+          {...data.pending}
+          renderItemActions={renderUpdateBidAction}
+        />
+        <DashboardListCard
+          {...data.accepted}
+          renderItemActions={renderUpdateBidAction}
+        />
+        <DashboardListCard
+          {...data.declined}
+          renderItemActions={renderUpdateBidAction}
+        />
       </section>
     </DashboardShell>
   )

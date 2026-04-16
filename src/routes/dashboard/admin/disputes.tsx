@@ -12,6 +12,11 @@ export const Route = createFileRoute('/dashboard/admin/disputes')({
 
 function AdminDisputesPage() {
   const data = getAdminDisputesData()
+  const renderDisputeAction = () => (
+    <Button size="sm" variant="outline" disabled>
+      View dispute
+    </Button>
+  )
 
   return (
     <DashboardShell
@@ -19,15 +24,16 @@ function AdminDisputesPage() {
       subtitle="Resolve issues reported by tourists and drivers."
       roleLabel="Admin"
       navItems={adminNavItems}
-      actions={
-        <Button size="sm" disabled>
-          Open dispute
-        </Button>
-      }
     >
       <section className="grid gap-6 lg:grid-cols-2">
-        <DashboardListCard {...data.openDisputes} />
-        <DashboardListCard {...data.resolved} />
+        <DashboardListCard
+          {...data.openDisputes}
+          renderItemActions={renderDisputeAction}
+        />
+        <DashboardListCard
+          {...data.resolved}
+          renderItemActions={renderDisputeAction}
+        />
       </section>
     </DashboardShell>
   )

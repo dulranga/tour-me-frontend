@@ -1,7 +1,8 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useMutation } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useState } from 'react'
+import { toast } from 'sonner'
 
 import AuthLayout from '#/components/auth/AuthLayout'
 import FormNotice from '#/components/auth/FormNotice'
@@ -16,6 +17,7 @@ import {
   FormMessage,
 } from '#/components/ui/form'
 import { Input } from '#/components/ui/input'
+import { api } from '#/lib/api/client'
 import { loginSchema } from '#/components/auth/schemas'
 import type { LoginValues } from '#/components/auth/schemas'
 
@@ -24,7 +26,21 @@ export const Route = createFileRoute('/auth/tourist/login')({
 })
 
 function TouristLogin() {
-  const [isSuccess, setIsSuccess] = useState(false)
+  const navigate = useNavigate()
+  const loginMutation = useMutation({
+    mutationFn: (values: LoginValues) =>
+      api('/auth/login', {
+        method: 'POST',
+        body: {
+          email: values.email,
+          password: values.password,
+        },
+      }),
+    onSuccess: () => {
+      toast.success('Signed in successfully')
+      void navigate({ to: '/dashboard/tourist' })
+    },
+  })
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -34,8 +50,7 @@ function TouristLogin() {
   })
 
   const onSubmit = (values: LoginValues) => {
-    void values
-    setIsSuccess(true)
+    loginMutation.mutate(values)
   }
 
   return (
@@ -76,17 +91,25 @@ function TouristLogin() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
-            Sign in
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={loginMutation.isPending}
+          >
+            {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
           </Button>
         </form>
       </Form>
-      {isSuccess ? (
+      {loginMutation.isError ? (
         <div className="mt-6">
           <FormNotice
-            variant="success"
-            title="Signed in"
-            description="Welcome back. You can continue to the home page."
+            variant="warning"
+            title="Sign in failed"
+            description={
+              loginMutation.error instanceof Error
+                ? loginMutation.error.message
+                : 'Unable to sign in right now.'
+            }
           />
         </div>
       ) : null}

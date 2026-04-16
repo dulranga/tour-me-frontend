@@ -7,9 +7,13 @@ const emailSchema = z
 
 const nameSchema = z.string().min(2, 'Name is required.')
 
-const passwordSchema = z
+export const passwordSchema = z
   .string()
-  .min(8, 'Password must be at least 8 characters.')
+  .min(8, 'Password must be at least 8 characters')
+  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+  .regex(/[0-9]/, 'Password must contain at least one number')
+  .regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character')
 
 const confirmPasswordSchema = z.string().min(1, 'Please confirm your password.')
 
@@ -40,12 +44,9 @@ export const ACCEPTED_DOCUMENT_TYPES = [
 const documentSchema = z
   .custom<File | null>()
   .refine((file) => file instanceof File, 'Document is required.')
+  .refine((file) => file.size <= MAX_DOCUMENT_SIZE, 'File must be 5MB or less.')
   .refine(
-    (file) => (file ? file.size <= MAX_DOCUMENT_SIZE : false),
-    'File must be 5MB or less.',
-  )
-  .refine(
-    (file) => (file ? ACCEPTED_DOCUMENT_TYPES.includes(file.type) : false),
+    (file) => ACCEPTED_DOCUMENT_TYPES.includes(file.type),
     'File must be a PDF or JPG/PNG image.',
   )
 

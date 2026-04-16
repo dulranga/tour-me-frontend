@@ -1,8 +1,10 @@
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 
 import { DashboardListCard } from '#/components/dashboard/DashboardListCard'
 import { DashboardShell } from '#/components/dashboard/DashboardShell'
 import { driverNavItems } from '#/components/dashboard/navigation'
+import { api } from '#/lib/api/client'
 import { getDriverMarketplaceData } from '#/lib/api/dashboard'
 import { Button } from '#/components/ui/button'
 import {
@@ -22,8 +24,19 @@ export const Route = createFileRoute('/dashboard/driver/marketplace')({
   component: DriverMarketplacePage,
 })
 
+type DriverMarketplaceResponse = ReturnType<typeof getDriverMarketplaceData>
+
 function DriverMarketplacePage() {
-  const data = getDriverMarketplaceData()
+  const {
+    data: marketplaceData,
+    isFetching,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['driver-marketplace'],
+    queryFn: () => api<DriverMarketplaceResponse>('/itineraries/available'),
+    initialData: getDriverMarketplaceData(),
+  })
   const renderSubmitBidAction = (item: { title: string }) => {
     const itemKey = item.title.toLowerCase().replace(/\s+/g, '-')
 
@@ -71,17 +84,27 @@ function DriverMarketplacePage() {
       roleLabel="Driver"
       navItems={driverNavItems}
     >
+      {isFetching ? (
+        <p className="text-sm text-text-muted">Loading marketplace...</p>
+      ) : null}
+      {isError ? (
+        <p className="rounded-md border border-border-subtle bg-bg-elevated px-3 py-2 text-sm text-[color:var(--status-error)]">
+          {error instanceof Error
+            ? error.message
+            : 'Unable to load marketplace.'}
+        </p>
+      ) : null}
       <section className="grid gap-6 lg:grid-cols-3">
         <DashboardListCard
-          {...data.matches}
+          {...marketplaceData.matches}
           renderItemActions={renderSubmitBidAction}
         />
         <DashboardListCard
-          {...data.expiringSoon}
+          {...marketplaceData.expiringSoon}
           renderItemActions={renderSubmitBidAction}
         />
         <DashboardListCard
-          {...data.newest}
+          {...marketplaceData.newest}
           renderItemActions={renderSubmitBidAction}
         />
       </section>

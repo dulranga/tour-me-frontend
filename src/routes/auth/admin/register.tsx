@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
@@ -21,6 +21,11 @@ import { registerSchema } from '#/components/auth/schemas'
 import type { RegisterValues } from '#/components/auth/schemas'
 
 export const Route = createFileRoute('/auth/admin/register')({
+  beforeLoad: () => {
+    throw redirect({
+      to: '/auth/admin/login',
+    })
+  },
   component: AdminRegister,
 })
 

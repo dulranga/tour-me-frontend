@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import {
   HeadContent,
   Scripts,
@@ -5,6 +7,8 @@ import {
   Link,
   useRouterState,
 } from '@tanstack/react-router'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Toaster } from 'sonner'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import Footer from '../components/Footer'
@@ -47,6 +51,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const isDashboardRoute = pathname.startsWith('/dashboard')
 //   const hidePublicShell = isAuthRoute || isDashboardRoute
   const hidePublicShell = isAuthRoute 
+  const [queryClient] = useState(() => new QueryClient())
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -55,20 +60,23 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
-        {hidePublicShell ? null : <Header />}
-        {children}
-        {hidePublicShell ? null : <Footer />}
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        <QueryClientProvider client={queryClient}>
+          {hidePublicShell ? null : <Header />}
+          {children}
+          {hidePublicShell ? null : <Footer />}
+          <Toaster richColors position="top-right" />
+          <TanStackDevtools
+            config={{
+              position: 'bottom-right',
+            }}
+            plugins={[
+              {
+                name: 'Tanstack Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+        </QueryClientProvider>
         <Scripts />
       </body>
     </html>

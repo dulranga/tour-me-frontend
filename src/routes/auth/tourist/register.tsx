@@ -1,7 +1,8 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useMutation } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useState } from 'react'
+import { toast } from 'sonner'
 
 import AuthLayout from '#/components/auth/AuthLayout'
 import FormNotice from '#/components/auth/FormNotice'
@@ -17,6 +18,7 @@ import {
   FormMessage,
 } from '#/components/ui/form'
 import { Input } from '#/components/ui/input'
+import { api } from '#/lib/api/client'
 import { registerSchema } from '#/components/auth/schemas'
 import type { RegisterValues } from '#/components/auth/schemas'
 
@@ -25,7 +27,22 @@ export const Route = createFileRoute('/auth/tourist/register')({
 })
 
 function TouristRegister() {
-  const [isSuccess, setIsSuccess] = useState(false)
+  const navigate = useNavigate()
+  const registerMutation = useMutation({
+    mutationFn: (values: RegisterValues) =>
+      api('/users/register/tourist', {
+        method: 'POST',
+        body: {
+          name: values.name,
+          email: values.email,
+          password: values.password,
+        },
+      }),
+    onSuccess: () => {
+      toast.success('Account created! Redirecting to dashboard...')
+      void navigate({ to: '/dashboard/tourist' })
+    },
+  })
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -37,8 +54,7 @@ function TouristRegister() {
   })
 
   const onSubmit = (values: RegisterValues) => {
-    void values
-    setIsSuccess(true)
+    registerMutation.mutate(values)
   }
 
   return (
@@ -108,17 +124,25 @@ function TouristRegister() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
-            Create account
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={registerMutation.isPending}
+          >
+            {registerMutation.isPending ? 'Creating account...' : 'Create account'}
           </Button>
         </form>
       </Form>
-      {isSuccess ? (
+      {registerMutation.isError ? (
         <div className="mt-6">
           <FormNotice
-            variant="success"
-            title="Account created"
-            description="You are signed in. Head to the home page to get started."
+            variant="warning"
+            title="Registration failed"
+            description={
+              registerMutation.error instanceof Error
+                ? registerMutation.error.message
+                : 'Unable to create your account right now.'
+            }
           />
         </div>
       ) : null}

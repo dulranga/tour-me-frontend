@@ -1,8 +1,10 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useMutation } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import type { FieldPath } from 'react-hook-form'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 import AuthLayout from '#/components/auth/AuthLayout'
 import FileUploadField from '#/components/auth/FileUploadField'
@@ -25,6 +27,7 @@ import {
   FormMessage,
 } from '#/components/ui/form'
 import { Input } from '#/components/ui/input'
+import { api } from '#/lib/api/client'
 
 export const Route = createFileRoute('/auth/driver/register')({
   component: DriverRegister,
@@ -45,8 +48,25 @@ const stepFields: Array<Array<FieldPath<DriverRegisterValues>>> = [
 ]
 
 function DriverRegister() {
+  const navigate = useNavigate()
   const [step, setStep] = useState(0)
-  const [isSuccess, setIsSuccess] = useState(false)
+  const registerMutation = useMutation({
+    mutationFn: (values: DriverRegisterValues) =>
+      api('/users/register/driver', {
+        method: 'POST',
+        body: {
+          name: values.name,
+          email: values.email,
+          passwordHash: values.password,
+          licenseNumber: values.vehiclePlate,
+          vehicleDetails: `${values.vehicleMake} ${values.vehicleModel} ${values.vehicleYear}`,
+        },
+      }),
+    onSuccess: () => {
+      toast.success('Registration submitted! Awaiting document verification.')
+      void navigate({ to: '/dashboard/driver' })
+    },
+  })
   const form = useForm<DriverRegisterValues>({
     resolver: zodResolver(driverRegisterSchema),
     defaultValues: {
@@ -67,8 +87,7 @@ function DriverRegister() {
   })
 
   const onSubmit = (values: DriverRegisterValues) => {
-    void values
-    setIsSuccess(true)
+    registerMutation.mutate(values)
   }
 
   const handleNextStep = async () => {
@@ -295,11 +314,21 @@ function DriverRegister() {
               Back
             </Button>
             {isFinalStep ? (
-              <Button type="submit" className="sm:w-40">
-                Submit registration
+              <Button
+                type="submit"
+                className="sm:w-40"
+                disabled={registerMutation.isPending}
+              >
+                {registerMutation.isPending
+                  ? 'Submitting...'
+                  : 'Submit registration'}
               </Button>
             ) : (
-              <Button type="button" onClick={handleNextStep} className="sm:w-40">
+              <Button
+                type="button"
+                onClick={handleNextStep}
+                className="sm:w-40"
+              >
                 Continue
               </Button>
             )}
@@ -307,12 +336,16 @@ function DriverRegister() {
         </form>
       </Form>
 
-      {isSuccess ? (
+      {registerMutation.isError ? (
         <div className="mt-6">
           <FormNotice
-            variant="success"
-            title="Registration received"
-            description="Your documents are under review. We will notify you by email once approved."
+            variant="warning"
+            title="Registration failed"
+            description={
+              registerMutation.error instanceof Error
+                ? registerMutation.error.message
+                : 'Unable to submit registration right now.'
+            }
           />
         </div>
       ) : null}

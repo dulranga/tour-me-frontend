@@ -23,7 +23,7 @@ export function CTASection() {
           <Button
             size="lg"
             variant="default"
-            onClick={() => navigate({ to: '/auth/register?role=tourist' })}
+            onClick={() => navigate({ to: '/auth/tourist/register' })}
             className="w-full sm:w-auto"
           >
             Join as Tourist
@@ -31,7 +31,7 @@ export function CTASection() {
           <Button
             size="lg"
             variant="outline"
-            onClick={() => navigate({ to: '/auth/register?role=driver' })}
+            onClick={() => navigate({ to: '/auth/driver/register' })}
             className="w-full sm:w-auto"
           >
             Become a Driver
@@ -41,7 +41,7 @@ export function CTASection() {
         <p className="mt-8 sm:mt-10 text-sm text-text-muted">
           Already have an account?{' '}
           <a
-            href="/auth/login"
+            href="/auth/tourist/login"
             className="font-semibold text-accent-teal hover:text-accent-blue transition-colors"
           >
             Sign in here

@@ -28,7 +28,7 @@ export function HeroSection() {
               <Button
                 size="lg"
                 variant="default"
-                onClick={() => navigate({ to: '/auth/register?role=tourist' })}
+                onClick={() => navigate({ to: '/auth/tourist/register' })}
                 className="w-full sm:w-auto"
               >
                 Join as Tourist
@@ -36,7 +36,7 @@ export function HeroSection() {
               <Button
                 size="lg"
                 variant="secondary"
-                onClick={() => navigate({ to: '/auth/register?role=driver' })}
+                onClick={() => navigate({ to: '/auth/driver/register' })}
                 className="w-full sm:w-auto"
               >
                 Become a Driver

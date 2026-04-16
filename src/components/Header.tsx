@@ -41,7 +41,7 @@ export default function Header() {
 
           {/* Right Side: Sign In + Theme Toggle */}
           <div className="flex items-center gap-4">
-            <Link to="/auth/register" className="hidden lg:block">
+            <Link to="/auth/tourist/login" className="hidden lg:block">
               <Button variant="outline" size="sm">
                 Sign In
               </Button>
@@ -75,7 +75,7 @@ export default function Header() {
                 </Link>
               ))}
               <Link
-                to="/auth/register"
+                to="/auth/tourist/login"
                 onClick={() => setIsMenuOpen(false)}
                 className="block pt-2 border-t border-border-subtle"
               >

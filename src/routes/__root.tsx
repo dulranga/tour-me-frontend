@@ -1,4 +1,10 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Scripts,
+  createRootRoute,
+  Link,
+  useRouterState,
+} from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import Footer from '../components/Footer'
@@ -30,9 +36,15 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: NotFound,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
+  const isAuthRoute = pathname.startsWith('/auth')
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -40,9 +52,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
-        <Header />
+        {isAuthRoute ? null : <Header />}
         {children}
-        <Footer />
+        {isAuthRoute ? null : <Footer />}
         <TanStackDevtools
           config={{
             position: 'bottom-right',
@@ -57,5 +69,27 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
+  )
+}
+
+function NotFound() {
+  return (
+    <main className="page-wrap flex min-h-[70vh] flex-col items-center justify-center px-4 py-16 text-center">
+      <p className="text-xs uppercase tracking-[0.3em] text-text-muted">
+        404
+      </p>
+      <h1 className="mt-3 text-3xl font-semibold text-text-primary">
+        Page not found
+      </h1>
+      <p className="mt-2 max-w-md text-sm text-text-secondary">
+        The page you are looking for does not exist or has moved.
+      </p>
+      <Link
+        to="/"
+        className="mt-6 inline-flex items-center justify-center rounded-md border border-border-default bg-bg-elevated px-4 py-2 text-sm font-semibold text-text-primary transition-colors hover:bg-bg-hover"
+      >
+        Back to home
+      </Link>
+    </main>
   )
 }

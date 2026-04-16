@@ -11,6 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as Auth_layoutRouteImport } from './routes/auth/__layout'
+import { Route as AuthTouristRegisterRouteImport } from './routes/auth/tourist/register'
+import { Route as AuthTouristLoginRouteImport } from './routes/auth/tourist/login'
+import { Route as AuthDriverRegisterRouteImport } from './routes/auth/driver/register'
+import { Route as AuthDriverLoginRouteImport } from './routes/auth/driver/login'
+import { Route as AuthAdminRegisterRouteImport } from './routes/auth/admin/register'
+import { Route as AuthAdminLoginRouteImport } from './routes/auth/admin/login'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -22,31 +29,122 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Auth_layoutRoute = Auth_layoutRouteImport.update({
+  id: '/auth/__layout',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthTouristRegisterRoute = AuthTouristRegisterRouteImport.update({
+  id: '/auth/tourist/register',
+  path: '/auth/tourist/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthTouristLoginRoute = AuthTouristLoginRouteImport.update({
+  id: '/auth/tourist/login',
+  path: '/auth/tourist/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthDriverRegisterRoute = AuthDriverRegisterRouteImport.update({
+  id: '/auth/driver/register',
+  path: '/auth/driver/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthDriverLoginRoute = AuthDriverLoginRouteImport.update({
+  id: '/auth/driver/login',
+  path: '/auth/driver/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthAdminRegisterRoute = AuthAdminRegisterRouteImport.update({
+  id: '/auth/admin/register',
+  path: '/auth/admin/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthAdminLoginRoute = AuthAdminLoginRouteImport.update({
+  id: '/auth/admin/login',
+  path: '/auth/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof Auth_layoutRoute
+  '/auth/admin/login': typeof AuthAdminLoginRoute
+  '/auth/admin/register': typeof AuthAdminRegisterRoute
+  '/auth/driver/login': typeof AuthDriverLoginRoute
+  '/auth/driver/register': typeof AuthDriverRegisterRoute
+  '/auth/tourist/login': typeof AuthTouristLoginRoute
+  '/auth/tourist/register': typeof AuthTouristRegisterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof Auth_layoutRoute
+  '/auth/admin/login': typeof AuthAdminLoginRoute
+  '/auth/admin/register': typeof AuthAdminRegisterRoute
+  '/auth/driver/login': typeof AuthDriverLoginRoute
+  '/auth/driver/register': typeof AuthDriverRegisterRoute
+  '/auth/tourist/login': typeof AuthTouristLoginRoute
+  '/auth/tourist/register': typeof AuthTouristRegisterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth/__layout': typeof Auth_layoutRoute
+  '/auth/admin/login': typeof AuthAdminLoginRoute
+  '/auth/admin/register': typeof AuthAdminRegisterRoute
+  '/auth/driver/login': typeof AuthDriverLoginRoute
+  '/auth/driver/register': typeof AuthDriverRegisterRoute
+  '/auth/tourist/login': typeof AuthTouristLoginRoute
+  '/auth/tourist/register': typeof AuthTouristRegisterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/auth/admin/login'
+    | '/auth/admin/register'
+    | '/auth/driver/login'
+    | '/auth/driver/register'
+    | '/auth/tourist/login'
+    | '/auth/tourist/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to:
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/auth/admin/login'
+    | '/auth/admin/register'
+    | '/auth/driver/login'
+    | '/auth/driver/register'
+    | '/auth/tourist/login'
+    | '/auth/tourist/register'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/auth/__layout'
+    | '/auth/admin/login'
+    | '/auth/admin/register'
+    | '/auth/driver/login'
+    | '/auth/driver/register'
+    | '/auth/tourist/login'
+    | '/auth/tourist/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  Auth_layoutRoute: typeof Auth_layoutRoute
+  AuthAdminLoginRoute: typeof AuthAdminLoginRoute
+  AuthAdminRegisterRoute: typeof AuthAdminRegisterRoute
+  AuthDriverLoginRoute: typeof AuthDriverLoginRoute
+  AuthDriverRegisterRoute: typeof AuthDriverRegisterRoute
+  AuthTouristLoginRoute: typeof AuthTouristLoginRoute
+  AuthTouristRegisterRoute: typeof AuthTouristRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +163,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/__layout': {
+      id: '/auth/__layout'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof Auth_layoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/tourist/register': {
+      id: '/auth/tourist/register'
+      path: '/auth/tourist/register'
+      fullPath: '/auth/tourist/register'
+      preLoaderRoute: typeof AuthTouristRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/tourist/login': {
+      id: '/auth/tourist/login'
+      path: '/auth/tourist/login'
+      fullPath: '/auth/tourist/login'
+      preLoaderRoute: typeof AuthTouristLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/driver/register': {
+      id: '/auth/driver/register'
+      path: '/auth/driver/register'
+      fullPath: '/auth/driver/register'
+      preLoaderRoute: typeof AuthDriverRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/driver/login': {
+      id: '/auth/driver/login'
+      path: '/auth/driver/login'
+      fullPath: '/auth/driver/login'
+      preLoaderRoute: typeof AuthDriverLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/admin/register': {
+      id: '/auth/admin/register'
+      path: '/auth/admin/register'
+      fullPath: '/auth/admin/register'
+      preLoaderRoute: typeof AuthAdminRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/admin/login': {
+      id: '/auth/admin/login'
+      path: '/auth/admin/login'
+      fullPath: '/auth/admin/login'
+      preLoaderRoute: typeof AuthAdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  Auth_layoutRoute: Auth_layoutRoute,
+  AuthAdminLoginRoute: AuthAdminLoginRoute,
+  AuthAdminRegisterRoute: AuthAdminRegisterRoute,
+  AuthDriverLoginRoute: AuthDriverLoginRoute,
+  AuthDriverRegisterRoute: AuthDriverRegisterRoute,
+  AuthTouristLoginRoute: AuthTouristLoginRoute,
+  AuthTouristRegisterRoute: AuthTouristRegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

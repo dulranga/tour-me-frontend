@@ -23,7 +23,9 @@ export async function verifyAuth(): Promise<AuthUser | null> {
     console.log(user)
 
     return user
-  } catch {
+  } catch (e) {
+    console.log({ e })
+
     return null
   }
 }

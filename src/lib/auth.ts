@@ -7,7 +7,7 @@ export enum UserRole {
 }
 
 export type AuthUser = {
-  id: string
+  userId: string
   email: string
   name: string
   role: UserRole
@@ -20,7 +20,6 @@ export type AuthUser = {
 export async function verifyAuth(): Promise<AuthUser | null> {
   try {
     const user = await api<AuthUser>('/auth/me')
-    console.log(user)
 
     return user
   } catch (e) {

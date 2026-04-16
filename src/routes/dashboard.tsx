@@ -29,6 +29,8 @@ export const Route = createFileRoute('/dashboard')({
         to: `/dashboard/${role}`,
       })
     }
+
+    return { user }
   },
   component: DashboardLayout,
 })

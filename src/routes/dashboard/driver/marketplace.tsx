@@ -1,5 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { toast } from 'sonner'
 
 import { DashboardListCard } from '#/components/dashboard/DashboardListCard'
 import { DashboardShell } from '#/components/dashboard/DashboardShell'
@@ -25,8 +27,21 @@ export const Route = createFileRoute('/dashboard/driver/marketplace')({
 })
 
 type DriverMarketplaceResponse = ReturnType<typeof getDriverMarketplaceData>
+type MarketplaceItem = {
+  id?: string
+  title: string
+  subtitle?: string
+  meta?: string
+  status?: string
+  statusVariant?: string
+}
 
 function DriverMarketplacePage() {
+  const queryClient = useQueryClient()
+  const [selectedItem, setSelectedItem] = useState<MarketplaceItem | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [bidAmount, setBidAmount] = useState('')
+
   const {
     data: marketplaceData,
     isFetching,
@@ -37,13 +52,68 @@ function DriverMarketplacePage() {
     queryFn: () => api<DriverMarketplaceResponse>('/itineraries/available'),
     initialData: getDriverMarketplaceData(),
   })
-  const renderSubmitBidAction = (item: { title: string }) => {
-    const itemKey = item.title.toLowerCase().replace(/\s+/g, '-')
 
+  const submitBidMutation = useMutation({
+    mutationFn: (variables: { itineraryId: string; bidAmount: number }) =>
+      api('/bids', {
+        method: 'POST',
+        body: {
+          itineraryId: variables.itineraryId,
+          bidAmount: variables.bidAmount,
+        },
+      }),
+    onSuccess: () => {
+      toast.success('Bid submitted successfully')
+      setIsDialogOpen(false)
+      setBidAmount('')
+      setSelectedItem(null)
+      void queryClient.invalidateQueries({ queryKey: ['driver-marketplace'] })
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : 'Failed to submit bid')
+    },
+  })
+
+  const handleSubmitBid = () => {
+    if (!selectedItem?.id) {
+      toast.error('Invalid itinerary selected')
+      return
+    }
+
+    const amount = parseFloat(bidAmount)
+    if (isNaN(amount) || amount <= 0) {
+      toast.error('Please enter a valid bid amount')
+      return
+    }
+
+    submitBidMutation.mutate({
+      itineraryId: selectedItem.id,
+      bidAmount: amount,
+    })
+  }
+
+  const renderSubmitBidAction = (item: MarketplaceItem) => {
     return (
-      <Dialog>
+      <Dialog
+        open={isDialogOpen && selectedItem?.id === item.id}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsDialogOpen(false)
+            setSelectedItem(null)
+            setBidAmount('')
+          }
+        }}
+      >
         <DialogTrigger asChild>
-          <Button size="sm">Submit bid</Button>
+          <Button
+            size="sm"
+            onClick={() => {
+              setSelectedItem(item)
+              setIsDialogOpen(true)
+            }}
+          >
+            Submit bid
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -54,13 +124,13 @@ function DriverMarketplacePage() {
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor={`marketplace-bid-amount-${itemKey}`}>
-                Bid amount
-              </Label>
+              <Label htmlFor="marketplace-bid-amount">Bid amount (LKR)</Label>
               <Input
-                id={`marketplace-bid-amount-${itemKey}`}
+                id="marketplace-bid-amount"
                 type="number"
                 placeholder="0"
+                value={bidAmount}
+                onChange={(e) => setBidAmount(e.target.value)}
               />
             </div>
           </div>
@@ -70,7 +140,13 @@ function DriverMarketplacePage() {
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="button">Submit bid</Button>
+            <Button
+              type="button"
+              onClick={handleSubmitBid}
+              disabled={submitBidMutation.isPending}
+            >
+              {submitBidMutation.isPending ? 'Submitting...' : 'Submit bid'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

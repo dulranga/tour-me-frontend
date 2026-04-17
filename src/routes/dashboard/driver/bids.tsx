@@ -1,76 +1,83 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute, useRouteContext } from '@tanstack/react-router'
 
 import { DashboardListCard } from '#/components/dashboard/DashboardListCard'
 import { DashboardShell } from '#/components/dashboard/DashboardShell'
 import { driverNavItems } from '#/components/dashboard/navigation'
-import { getDriverBidsData } from '#/lib/api/dashboard'
-import { Button } from '#/components/ui/button'
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '#/components/ui/dialog'
-import { Input } from '#/components/ui/input'
-import { Label } from '#/components/ui/label'
+import { api } from '#/lib/api/client'
+import type { DashboardListData, DashboardListItem } from '#/lib/api/dashboard'
 
 export const Route = createFileRoute('/dashboard/driver/bids')({
   component: DriverBidsPage,
 })
 
-function DriverBidsPage() {
-  const data = getDriverBidsData()
-  const renderUpdateBidAction = (item: { title: string }) => {
-    const itemKey = item.title.toLowerCase().replace(/\s+/g, '-')
+type DriverBid = {
+  bidId: number
+  driverId: number
+  itineraryId: number
+  bidAmount: number
+  estimatedArrivalTime?: string
+  notes?: string
+  status: 'PENDING' | 'SELECTED' | 'DECLINED'
+  submittedAt: string
+}
 
-    return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button size="sm" variant="outline">
-            Update bid
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Update bid</DialogTitle>
-            <DialogDescription>
-              Adjust amount or status for {item.title}.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor={`driver-bid-amount-${itemKey}`}>
-                Bid amount
-              </Label>
-              <Input
-                id={`driver-bid-amount-${itemKey}`}
-                type="number"
-                placeholder="0"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor={`driver-bid-status-${itemKey}`}>Status</Label>
-              <Input
-                id={`driver-bid-status-${itemKey}`}
-                placeholder="PENDING"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline" type="button">
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="button">Save changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    )
+function DriverBidsPage() {
+  const { user } = useRouteContext({ from: '/dashboard' })
+
+  const {
+    data: bids,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['driver-bids', user.userId],
+    queryFn: () => api<DriverBid[]>(`/bids/driver/${user.userId}`),
+  })
+
+  // Group bids by status
+  const groupedBids = {
+    pending: {
+      title: 'Pending bids',
+      description: 'Waiting for tourist response.',
+      items: [] as DashboardListItem[],
+    },
+    selected: {
+      title: 'Accepted bids',
+      description: 'Trips that are confirmed.',
+      items: [] as DashboardListItem[],
+    },
+    declined: {
+      title: 'Declined bids',
+      description: 'Bids that were not accepted.',
+      items: [] as DashboardListItem[],
+    },
+  }
+
+  if (bids) {
+    bids.forEach((bid) => {
+      const item: DashboardListItem = {
+        id: bid.bidId.toString(),
+        title: `Itinerary #${bid.itineraryId} - LKR ${bid.bidAmount}`,
+        subtitle: bid.notes || 'No notes',
+        meta: new Date(bid.submittedAt).toLocaleDateString(),
+        status: bid.status,
+        statusVariant:
+          bid.status === 'PENDING'
+            ? 'warning'
+            : bid.status === 'SELECTED'
+              ? 'success'
+              : 'destructive',
+      }
+
+      if (bid.status === 'PENDING') {
+        groupedBids.pending.items.push(item)
+      } else if (bid.status === 'SELECTED') {
+        groupedBids.selected.items.push(item)
+      } else if (bid.status === 'DECLINED') {
+        groupedBids.declined.items.push(item)
+      }
+    })
   }
 
   return (
@@ -80,20 +87,19 @@ function DriverBidsPage() {
       roleLabel="Driver"
       navItems={driverNavItems}
     >
-      <section className="grid gap-6 lg:grid-cols-3">
-        <DashboardListCard
-          {...data.pending}
-          renderItemActions={renderUpdateBidAction}
-        />
-        <DashboardListCard
-          {...data.accepted}
-          renderItemActions={renderUpdateBidAction}
-        />
-        <DashboardListCard
-          {...data.declined}
-          renderItemActions={renderUpdateBidAction}
-        />
-      </section>
+      {isLoading && <p className="text-sm text-text-muted">Loading bids...</p>}
+      {isError && (
+        <p className="rounded-md border border-border-subtle bg-bg-elevated px-3 py-2 text-sm text-[color:var(--status-error)]">
+          {error instanceof Error ? error.message : 'Failed to load bids'}
+        </p>
+      )}
+      {!isLoading && !isError && (
+        <section className="grid gap-6 lg:grid-cols-3">
+          <DashboardListCard {...groupedBids.pending} />
+          <DashboardListCard {...groupedBids.selected} />
+          <DashboardListCard {...groupedBids.declined} />
+        </section>
+      )}
     </DashboardShell>
   )
 }

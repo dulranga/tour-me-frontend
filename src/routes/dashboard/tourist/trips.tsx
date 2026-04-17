@@ -1,10 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute, useRouteContext } from '@tanstack/react-router'
 
 import { DashboardListCard } from '#/components/dashboard/DashboardListCard'
 import { DashboardShell } from '#/components/dashboard/DashboardShell'
 import { touristNavItems } from '#/components/dashboard/navigation'
-import { getTouristTripsData } from '#/lib/api/dashboard'
+import { api } from '#/lib/api/client'
 import { Button } from '#/components/ui/button'
+import type { DashboardListItem } from '#/lib/api/dashboard'
 import {
   Dialog,
   DialogClose,
@@ -15,53 +17,111 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '#/components/ui/dialog'
-import { Input } from '#/components/ui/input'
-import { Label } from '#/components/ui/label'
 
 export const Route = createFileRoute('/dashboard/tourist/trips')({
   component: TouristTripsPage,
 })
 
-function TouristTripsPage() {
-  const data = getTouristTripsData()
-  const renderCompletionAction = (item: { title: string }) => {
-    const itemKey = item.title.toLowerCase().replace(/\s+/g, '-')
+type Trip = {
+  tripId: number
+  itineraryId: number
+  driverId: number
+  pickupLocation: string
+  destination: string
+  pickupTime: string
+  estimatedDuration: number
+  status: 'UPCOMING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'
+  createdAt: string
+}
 
-    return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button size="sm" variant="outline">
-            Confirm completion
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm trip completion</DialogTitle>
-            <DialogDescription>
-              Mark {item.title} as completed.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor={`tourist-trip-status-${itemKey}`}>Status</Label>
-              <Input
-                id={`tourist-trip-status-${itemKey}`}
-                placeholder="COMPLETED"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline" type="button">
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="button">Confirm completion</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    )
+function TouristTripsPage() {
+  const { user } = useRouteContext({ from: '/dashboard' })
+
+  // Fetch user's confirmed trips
+  const {
+    data: trips,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['user-trips', user.userId],
+    queryFn: () => api<Trip[]>(`/trips/tourist/${user.userId}`),
+  })
+
+  // Group trips by status
+  const groupedTrips = {
+    upcoming: {
+      title: 'Upcoming trips',
+      description: 'Trips scheduled with drivers.',
+      items: [] as DashboardListItem[],
+    },
+    completed: {
+      title: 'Completed trips',
+      description: "Trips you've finished.",
+      items: [] as DashboardListItem[],
+    },
   }
+
+  if (trips) {
+    trips.forEach((trip) => {
+      const item: DashboardListItem = {
+        id: trip.tripId.toString(),
+        title: `${trip.pickupLocation} → ${trip.destination}`,
+        subtitle: `${trip.status}`,
+        meta: new Date(trip.pickupTime).toLocaleDateString(),
+        status: trip.status,
+        statusVariant:
+          trip.status === 'UPCOMING'
+            ? 'secondary'
+            : trip.status === 'COMPLETED'
+              ? 'success'
+              : 'outline',
+      }
+
+      if (trip.status === 'UPCOMING' || trip.status === 'IN_PROGRESS') {
+        groupedTrips.upcoming.items.push(item)
+      } else if (trip.status === 'COMPLETED') {
+        groupedTrips.completed.items.push(item)
+      }
+    })
+  }
+
+  const renderTripDetailsAction = (item: DashboardListItem) => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="outline">
+          View details
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Trip details</DialogTitle>
+          <DialogDescription>{item.title}</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3 py-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-text-muted">Route</span>
+            <span className="text-sm font-medium">{item.title}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-text-muted">Status</span>
+            <span className="text-sm font-medium">{item.status}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-text-muted">Date</span>
+            <span className="text-sm font-medium">{item.meta}</span>
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline" type="button">
+              Close
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
 
   return (
     <DashboardShell
@@ -70,13 +130,21 @@ function TouristTripsPage() {
       roleLabel="Tourist"
       navItems={touristNavItems}
     >
-      <section className="grid gap-6 lg:grid-cols-2">
-        <DashboardListCard {...data.upcoming} />
-        <DashboardListCard
-          {...data.past}
-          renderItemActions={renderCompletionAction}
-        />
-      </section>
+      {isLoading && <p className="text-sm text-text-muted">Loading trips...</p>}
+      {isError && (
+        <p className="rounded-md border border-border-subtle bg-bg-elevated px-3 py-2 text-sm text-[color:var(--status-error)]">
+          {error instanceof Error ? error.message : 'Failed to load trips'}
+        </p>
+      )}
+      {!isLoading && !isError && (
+        <section className="grid gap-6 lg:grid-cols-2">
+          <DashboardListCard {...groupedTrips.upcoming} />
+          <DashboardListCard
+            {...groupedTrips.completed}
+            renderItemActions={renderTripDetailsAction}
+          />
+        </section>
+      )}
     </DashboardShell>
   )
 }

@@ -5,7 +5,7 @@ import { DashboardListCard } from '#/components/dashboard/DashboardListCard'
 import { DashboardShell } from '#/components/dashboard/DashboardShell'
 import { driverNavItems } from '#/components/dashboard/navigation'
 import { api } from '#/lib/api/client'
-import type { DashboardListData, DashboardListItem } from '#/lib/api/dashboard'
+import type { DashboardListItem } from '#/lib/api/dashboard'
 
 export const Route = createFileRoute('/dashboard/driver/bids')({
   component: DriverBidsPage,

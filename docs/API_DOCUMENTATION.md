@@ -10,6 +10,7 @@ This document provides a comprehensive guide to all API endpoints available in t
 2. [User Controller](#user-controller)
 3. [Itinerary Controller](#itinerary-controller)
 4. [Bid Controller](#bid-controller)
+5. [Message Controller](#message-controller)
 
 ---
 
@@ -636,6 +637,116 @@ This document provides a comprehensive guide to all API endpoints available in t
 
 ---
 
+### 6. Upload Receipt
+
+- **Endpoint:** `POST /api/itineraries/{itineraryId}/receipt`
+- **Description:** Uploads a receipt file for a completed itinerary. Files are stored locally on the server. Supports local disk storage, with future support for S3 and other cloud services.
+- **URL Parameters:**
+  - `itineraryId` (required): Integer - Itinerary ID
+- **Query Parameters:**
+  - `file` (required): File - The receipt file to upload (max 10MB)
+- **Request Body:** None (multipart/form-data)
+- **Success Response (201):**
+  ```json
+  {
+    "status": 201,
+    "message": "Receipt uploaded successfully",
+    "data": {
+      "receiptId": 1,
+      "itineraryId": 1,
+      "receiptUrl": "/receipts/550e8400-e29b-41d4-a716-446655440000_receipt.pdf",
+      "fileName": "receipt.pdf",
+      "fileSize": "245678",
+      "uploadedAt": "2024-04-17T16:00:00"
+    }
+  }
+  ```
+- **Error Response (404):**
+  ```json
+  {
+    "status": 404,
+    "message": "Itinerary not found",
+    "data": null
+  }
+  ```
+- **Error Response (400):**
+  ```json
+  {
+    "status": 400,
+    "message": "File size exceeds maximum limit of 10MB",
+    "data": null
+  }
+  ```
+- **Notes:**
+  - Maximum file size: 10MB
+  - Accepts common receipt formats (PDF, JPG, PNG, etc.)
+  - Files are stored with unique identifiers to prevent name conflicts
+  - Previous receipts are automatically deleted when a new one is uploaded
+  - **Architecture Note:** Currently uses local disk storage. Future versions will support AWS S3, Azure Blob Storage, and other services through a pluggable storage interface
+
+---
+
+### 7. Get Receipt
+
+- **Endpoint:** `GET /api/itineraries/{itineraryId}/receipt`
+- **Description:** Retrieves the receipt details for a specific itinerary.
+- **URL Parameters:**
+  - `itineraryId` (required): Integer - Itinerary ID
+- **Query Parameters:** None
+- **Request Body:** None
+- **Success Response (200):**
+  ```json
+  {
+    "status": 200,
+    "message": "Receipt retrieved successfully",
+    "data": {
+      "receiptId": 1,
+      "itineraryId": 1,
+      "receiptUrl": "/receipts/550e8400-e29b-41d4-a716-446655440000_receipt.pdf",
+      "fileName": "receipt.pdf",
+      "fileSize": "245678",
+      "uploadedAt": "2024-04-17T16:00:00"
+    }
+  }
+  ```
+- **Error Response (404):**
+  ```json
+  {
+    "status": 404,
+    "message": "No receipt found for this itinerary",
+    "data": null
+  }
+  ```
+
+---
+
+### 8. Delete Receipt
+
+- **Endpoint:** `DELETE /api/itineraries/{itineraryId}/receipt`
+- **Description:** Deletes the receipt for a specific itinerary.
+- **URL Parameters:**
+  - `itineraryId` (required): Integer - Itinerary ID
+- **Query Parameters:** None
+- **Request Body:** None
+- **Success Response (200):**
+  ```json
+  {
+    "status": 200,
+    "message": "Receipt deleted successfully",
+    "data": null
+  }
+  ```
+- **Error Response (404):**
+  ```json
+  {
+    "status": 404,
+    "message": "Receipt not found",
+    "data": null
+  }
+  ```
+
+---
+
 ## Bid Controller
 
 **Base URL:** `/api/bids`
@@ -834,6 +945,184 @@ This document provides a comprehensive guide to all API endpoints available in t
 
 ---
 
+### 6. Update Bid
+
+- **Endpoint:** `PUT /api/bids/{id}`
+- **Description:** Allows a driver to update an existing bid. Only PENDING bids can be updated.
+- **URL Parameters:**
+  - `id` (required): Integer - Bid ID to update
+- **Query Parameters:**
+  - `driverId` (required): Integer - ID of the driver (must be the bid owner)
+- **Request Body:**
+  ```json
+  {
+    "amount": 4800
+  }
+  ```
+- **Success Response (200):**
+  ```json
+  {
+    "status": 200,
+    "message": "Bid updated successfully",
+    "data": {
+      "bidId": 1,
+      "driverId": 2,
+      "itineraryId": 1,
+      "amount": 4800,
+      "status": "PENDING",
+      "submittedAt": "2024-04-17T10:30:00"
+    }
+  }
+  ```
+- **Error Response (400):**
+  ```json
+  {
+    "status": 400,
+    "message": "Only pending bids can be updated",
+    "data": null
+  }
+  ```
+- **Error Response (403):**
+  ```json
+  {
+    "status": 403,
+    "message": "You are not authorized to update this bid",
+    "data": null
+  }
+  ```
+- **Notes:**
+  - Only drivers who created the bid can update it
+  - Only bids with PENDING status can be updated
+
+---
+
+## Message Controller
+
+**Base URL:** `/api/messages`
+
+**Purpose:** Manages messaging system between users (drivers, tourists, and administrators).
+
+### 1. Send Message
+
+- **Endpoint:** `POST /api/messages/send`
+- **Description:** Sends a message from one user to another.
+- **URL Parameters:** None
+- **Query Parameters:**
+  - `senderId` (required): Integer - ID of the user sending the message
+  - `receiverId` (required): Integer - ID of the user receiving the message
+- **Request Body:**
+  ```json
+  {
+    "content": "I can pick you up in 15 minutes"
+  }
+  ```
+- **Success Response (201):**
+  ```json
+  {
+    "status": 201,
+    "message": "Message sent successfully",
+    "data": {
+      "messageId": 1,
+      "senderId": 2,
+      "receiverId": 1,
+      "content": "I can pick you up in 15 minutes",
+      "timestamp": "2024-04-17T14:30:00",
+      "isRead": false
+    }
+  }
+  ```
+- **Error Response (404):**
+  ```json
+  {
+    "status": 404,
+    "message": "Sender not found",
+    "data": null
+  }
+  ```
+- **Error Response (400):**
+  ```json
+  {
+    "status": 400,
+    "message": "Message content cannot be empty",
+    "data": null
+  }
+  ```
+
+---
+
+### 2. Get Message Conversation
+
+- **Endpoint:** `GET /api/messages/conversation`
+- **Description:** Retrieves all messages between two users (bidirectional).
+- **URL Parameters:** None
+- **Query Parameters:**
+  - `userId1` (required): Integer - First user ID
+  - `userId2` (required): Integer - Second user ID
+- **Request Body:** None
+- **Success Response (200):**
+  ```json
+  {
+    "status": 200,
+    "message": "Messages retrieved successfully",
+    "data": [
+      {
+        "messageId": 2,
+        "senderId": 1,
+        "receiverId": 2,
+        "content": "Thanks for the update",
+        "timestamp": "2024-04-17T14:35:00",
+        "isRead": true
+      },
+      {
+        "messageId": 1,
+        "senderId": 2,
+        "receiverId": 1,
+        "content": "I can pick you up in 15 minutes",
+        "timestamp": "2024-04-17T14:30:00",
+        "isRead": true
+      }
+    ]
+  }
+  ```
+
+---
+
+### 3. Get Incoming Messages
+
+- **Endpoint:** `GET /api/messages/incoming/{userId}`
+- **Description:** Retrieves all incoming messages for a specific user.
+- **URL Parameters:**
+  - `userId` (required): Integer - User ID
+- **Query Parameters:** None
+- **Request Body:** None
+- **Success Response (200):**
+  ```json
+  {
+    "status": 200,
+    "message": "Incoming messages retrieved successfully",
+    "data": [
+      {
+        "messageId": 5,
+        "senderId": 3,
+        "receiverId": 1,
+        "content": "Can you travel tomorrow?",
+        "timestamp": "2024-04-17T15:00:00",
+        "isRead": false
+      },
+      {
+        "messageId": 2,
+        "senderId": 2,
+        "receiverId": 1,
+        "content": "Thanks for the update",
+        "timestamp": "2024-04-17T14:35:00",
+        "isRead": true
+      }
+    ]
+  }
+  ```
+
+---
+
 ## Response Format
 
 All API responses follow a consistent format:
@@ -848,19 +1137,20 @@ All API responses follow a consistent format:
 
 ### Common HTTP Status Codes
 
-| Code | Meaning |
-|------|---------|
-| 200  | OK - Request successful |
-| 400  | Bad Request - Invalid parameters |
+| Code | Meaning                                       |
+| ---- | --------------------------------------------- |
+| 200  | OK - Request successful                       |
+| 400  | Bad Request - Invalid parameters              |
 | 401  | Unauthorized - Invalid/missing authentication |
-| 404  | Not Found - Resource not found |
-| 500  | Internal Server Error - Server error |
+| 404  | Not Found - Resource not found                |
+| 500  | Internal Server Error - Server error          |
 
 ---
 
 ## Authentication
 
 Most endpoints require JWT authentication via:
+
 - **Bearer Token:** Include in `Authorization: Bearer <token>` header
 - **Cookies:** Automatic with `Authorization` and `RefreshToken` cookies
 
@@ -869,4 +1159,3 @@ Most endpoints require JWT authentication via:
 ## Error Handling
 
 All errors follow the standard response format with appropriate HTTP status codes and descriptive messages.
-

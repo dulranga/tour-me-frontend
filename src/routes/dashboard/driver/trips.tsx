@@ -67,10 +67,6 @@ function DriverTripsPage() {
     allItineraries
       .filter((itinerary) => selectedBidItineraryIds.has(itinerary.itineraryId))
       .forEach((itinerary) => {
-        const bid = userBids.find(
-          (b) =>
-            b.itineraryId === itinerary.itineraryId && b.status === 'SELECTED',
-        )
         confirmedTrips.items.push({
           id: itinerary.itineraryId.toString(),
           title: `${itinerary.pickupLocation} → ${itinerary.destination}`,

@@ -13,7 +13,7 @@ import { DashboardShell } from '#/components/dashboard/DashboardShell'
 import { touristNavItems } from '#/components/dashboard/navigation'
 import { api } from '#/lib/api/client'
 import { Button } from '#/components/ui/button'
-import type { DashboardListData, DashboardListItem } from '#/lib/api/dashboard'
+import type { DashboardListItem } from '#/lib/api/dashboard'
 import {
   Dialog,
   DialogClose,

@@ -23,7 +23,6 @@ import {
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { api } from '#/lib/api/client'
-import { getTouristOverviewData } from '#/lib/api/dashboard'
 
 export const Route = createFileRoute('/dashboard/tourist/')({
   component: TouristDashboard,
@@ -46,7 +45,6 @@ function TouristDashboard() {
     specialRequests: '',
   })
 
-  const mockData = getTouristOverviewData()
   const iconMap = {
     'map-pin': MapPin,
     handshake: Handshake,
@@ -59,8 +57,53 @@ function TouristDashboard() {
     useQuery({
       queryKey: ['user-itineraries', user.userId],
       queryFn: () => api(`/itineraries/user/${user.userId}`),
-      initialData: mockData.recentItineraries.items,
     })
+
+  // Fetch user bids
+  const { data: bidsResponse, isLoading: isLoadingBids } = useQuery({
+    queryKey: ['user-bids', user.userId],
+    queryFn: () => api(`/bids/itinerary/*/user/${user.userId}`),
+  })
+
+  // Calculate stats from real data
+  const stats = [
+    {
+      title: 'Active itineraries',
+      value: String(
+        Array.isArray(itinerariesResponse)
+          ? itinerariesResponse.filter((i: any) => i.status === 'OPEN').length
+          : 0,
+      ),
+      description: 'Awaiting driver selection',
+      icon: 'map-pin' as const,
+    },
+    {
+      title: 'Open bids',
+      value: String(
+        Array.isArray(bidsResponse)
+          ? bidsResponse.filter((b: any) => b.status === 'PENDING').length
+          : 0,
+      ),
+      description: 'Awaiting your response',
+      icon: 'handshake' as const,
+    },
+    {
+      title: 'Accepted trips',
+      value: String(
+        Array.isArray(bidsResponse)
+          ? bidsResponse.filter((b: any) => b.status === 'SELECTED').length
+          : 0,
+      ),
+      description: 'Driver confirmed',
+      icon: 'calendar' as const,
+    },
+    {
+      title: 'Pending receipts',
+      value: '0',
+      description: 'All caught up',
+      icon: 'receipt' as const,
+    },
+  ]
 
   // Create itinerary mutation
   const createItineraryMutation = useMutation({
@@ -74,7 +117,7 @@ function TouristDashboard() {
           estimatedDistance: parseFloat(values.estimatedDistance),
           estimatedDuration: parseInt(values.estimatedDuration),
           numberOfPassengers: parseInt(values.numberOfPassengers),
-          specialRequests: values.specialRequests,
+          specialRequirements: values.specialRequests,
         },
       }),
     onSuccess: () => {
@@ -89,9 +132,12 @@ function TouristDashboard() {
         numberOfPassengers: '1',
         specialRequests: '',
       })
-      // Refetch itineraries
+      // Refetch itineraries and bids
       void queryClient.invalidateQueries({
         queryKey: ['user-itineraries', user.userId],
+      })
+      void queryClient.invalidateQueries({
+        queryKey: ['user-bids', user.userId],
       })
     },
     onError: () => {
@@ -234,90 +280,14 @@ function TouristDashboard() {
       </DialogContent>
     </Dialog>
   )
-  const renderBidUpdateAction = (item: { title: string }) => {
-    const itemKey = item.title.toLowerCase().replace(/\s+/g, '-')
-
-    return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button size="sm" variant="outline">
-            Update bid
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Update bid status</DialogTitle>
-            <DialogDescription>
-              Update the status for {item.title}.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor={`tourist-bid-status-${itemKey}`}>Status</Label>
-              <Input
-                id={`tourist-bid-status-${itemKey}`}
-                placeholder="ACCEPTED"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline" type="button">
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="button">Save status</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    )
-  }
-  const renderTripStatusAction = (item: { title: string }) => {
-    const itemKey = item.title.toLowerCase().replace(/\s+/g, '-')
-
-    return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button size="sm" variant="outline">
-            Update status
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Update itinerary status</DialogTitle>
-            <DialogDescription>
-              Update the status for {item.title}.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor={`tourist-trip-status-${itemKey}`}>Status</Label>
-              <Input
-                id={`tourist-trip-status-${itemKey}`}
-                placeholder="COMPLETED"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline" type="button">
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="button">Save status</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    )
-  }
-  const renderDisabledMessageAction = () => (
+  const renderBidUpdateAction = () => (
     <Button size="sm" variant="outline" disabled>
-      Open chat
+      Bid received
     </Button>
   )
-  const renderDisabledReceiptAction = () => (
+  const renderTripStatusAction = () => (
     <Button size="sm" variant="outline" disabled>
-      Upload receipt
+      View details
     </Button>
   )
 
@@ -329,7 +299,7 @@ function TouristDashboard() {
       navItems={touristNavItems}
     >
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {mockData.stats.map((stat) => {
+        {stats.map((stat) => {
           const Icon = iconMap[stat.icon]
 
           return (
@@ -338,8 +308,7 @@ function TouristDashboard() {
               title={stat.title}
               value={stat.value}
               description={stat.description}
-              trend={stat.trend}
-              icon={Icon ? <Icon className="h-5 w-5" /> : null}
+              icon={<Icon className="h-5 w-5" />}
             />
           )
         })}
@@ -374,7 +343,26 @@ function TouristDashboard() {
             headerAction={renderCreateItineraryAction()}
           />
           <DashboardListCard
-            {...mockData.bidUpdates}
+            title="Received bids"
+            description="Drivers bidding on your itineraries."
+            items={
+              Array.isArray(bidsResponse)
+                ? bidsResponse.map((bid: any) => ({
+                    id: bid.bidId?.toString(),
+                    title: `LKR ${bid.bidAmount}`,
+                    subtitle: bid.notes || 'No notes',
+                    meta: new Date(bid.submittedAt).toLocaleDateString(),
+                    status: bid.status,
+                    statusVariant:
+                      bid.status === 'PENDING'
+                        ? 'warning'
+                        : bid.status === 'SELECTED'
+                          ? 'success'
+                          : 'secondary',
+                  }))
+                : []
+            }
+            emptyState={isLoadingBids ? 'Loading bids...' : 'No bids yet'}
             renderItemActions={renderBidUpdateAction}
           />
         </div>
@@ -384,8 +372,7 @@ function TouristDashboard() {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="rounded-md border border-border-subtle bg-bg-base/50 p-3 text-xs text-text-muted">
-              Messaging and itinerary creation screens are next in the build
-              queue.
+              Messages and receipt uploads are coming soon.
             </div>
           </CardContent>
         </Card>
@@ -393,26 +380,54 @@ function TouristDashboard() {
 
       <section className="grid gap-6 lg:grid-cols-3">
         <DashboardListCard
-          {...mockData.upcomingTrips}
+          title="Upcoming trips"
+          description="Your confirmed and scheduled trips."
+          items={
+            Array.isArray(itinerariesResponse)
+              ? itinerariesResponse
+                  .filter((it: any) => it.status === 'CONFIRMED')
+                  .map((itinerary: any) => ({
+                    id: itinerary.itineraryId?.toString(),
+                    title: `${itinerary.pickupLocation} to ${itinerary.destination}`,
+                    subtitle: `${itinerary.numberOfPassengers || 1} passenger(s)`,
+                    meta: new Date(itinerary.pickupTime).toLocaleDateString(),
+                    status: 'CONFIRMED',
+                    statusVariant: 'success' as const,
+                  }))
+              : []
+          }
+          emptyState="No upcoming trips"
           renderItemActions={renderTripStatusAction}
         />
         <DashboardListCard
-          {...mockData.messages}
+          title="Messages"
+          description="Communicate with drivers."
+          items={[]}
           headerAction={
             <Button size="sm" variant="outline" disabled>
               New message
             </Button>
           }
-          renderItemActions={renderDisabledMessageAction}
+          renderItemActions={() => (
+            <Button size="sm" variant="outline" disabled>
+              Open chat
+            </Button>
+          )}
         />
         <DashboardListCard
-          {...mockData.receipts}
+          title="Receipts"
+          description="Trip expense receipts."
+          items={[]}
           headerAction={
             <Button size="sm" variant="outline" disabled>
               Upload receipt
             </Button>
           }
-          renderItemActions={renderDisabledReceiptAction}
+          renderItemActions={() => (
+            <Button size="sm" variant="outline" disabled>
+              Upload
+            </Button>
+          )}
         />
       </section>
     </DashboardShell>

@@ -69,6 +69,7 @@ function DriverRegister() {
   })
   const form = useForm<DriverRegisterValues>({
     resolver: zodResolver(driverRegisterSchema),
+    mode: 'onBlur',
     defaultValues: {
       name: '',
       email: '',
@@ -81,8 +82,8 @@ function DriverRegister() {
       vehiclePlate: '',
       vehicleColor: '',
       vehicleType: '',
-      licenseFile: null,
-      registrationFile: null,
+      licenseFile: undefined,
+      registrationFile: undefined,
     },
   })
 
@@ -119,8 +120,8 @@ function DriverRegister() {
               {step === 0
                 ? 'Account details'
                 : step === 1
-                ? 'Vehicle details'
-                : 'Verification documents'}
+                  ? 'Vehicle details'
+                  : 'Verification documents'}
             </span>
           </div>
 
@@ -162,7 +163,8 @@ function DriverRegister() {
                       <PasswordInput autoComplete="new-password" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Use at least 8 characters with a mix of letters and numbers.
+                      Use at least 8 characters with a mix of letters and
+                      numbers.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -287,7 +289,7 @@ function DriverRegister() {
                 name="licenseFile"
                 label="Driver license"
                 description={`PDF, JPG, or PNG. Max size ${Math.round(
-                  MAX_DOCUMENT_SIZE / 1024 / 1024
+                  MAX_DOCUMENT_SIZE / 1024 / 1024,
                 )}MB.`}
                 accept={ACCEPTED_DOCUMENT_TYPES.join(',')}
               />
@@ -296,7 +298,7 @@ function DriverRegister() {
                 name="registrationFile"
                 label="Vehicle registration"
                 description={`PDF, JPG, or PNG. Max size ${Math.round(
-                  MAX_DOCUMENT_SIZE / 1024 / 1024
+                  MAX_DOCUMENT_SIZE / 1024 / 1024,
                 )}MB.`}
                 accept={ACCEPTED_DOCUMENT_TYPES.join(',')}
               />
@@ -328,8 +330,9 @@ function DriverRegister() {
                 type="button"
                 onClick={handleNextStep}
                 className="sm:w-40"
+                disabled={form.formState.isValidating}
               >
-                Continue
+                {form.formState.isValidating ? 'Validating...' : 'Continue'}
               </Button>
             )}
           </div>
@@ -352,7 +355,10 @@ function DriverRegister() {
 
       <div className="mt-6 flex items-center justify-between text-sm text-text-secondary">
         <span>Already registered?</span>
-        <Link to="/auth/driver/login" className="text-accent-teal hover:underline">
+        <Link
+          to="/auth/driver/login"
+          className="text-accent-teal hover:underline"
+        >
           Sign in
         </Link>
       </div>

@@ -16,7 +16,8 @@ export function CTASection() {
         </h2>
 
         <p className="text-base sm:text-lg text-text-secondary mb-8 sm:mb-12">
-          Join thousands of travelers and drivers already using TourMe to connect safely and transparently.
+          Join thousands of travelers and drivers already using TourMe to
+          connect safely and transparently.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
@@ -41,7 +42,7 @@ export function CTASection() {
         <p className="mt-8 sm:mt-10 text-sm text-text-muted">
           Already have an account?{' '}
           <a
-            href="/auth/tourist/login"
+            href="/auth/login"
             className="font-semibold text-accent-teal hover:text-accent-blue transition-colors"
           >
             Sign in here

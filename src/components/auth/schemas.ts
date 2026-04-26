@@ -41,12 +41,24 @@ export const ACCEPTED_DOCUMENT_TYPES = [
   'image/png',
 ]
 
-const documentSchema = z
-  .custom<File | null>()
-  .refine((file) => file instanceof File, 'Document is required.')
-  .refine((file) => file.size <= MAX_DOCUMENT_SIZE, 'File must be 5MB or less.')
+const optionalDocumentSchema = z
+  .custom<File | null | undefined>()
+  .nullable()
+  .optional()
   .refine(
-    (file) => ACCEPTED_DOCUMENT_TYPES.includes(file.type),
+    (file) => file === null || file === undefined || file instanceof File,
+    'Document must be a file.',
+  )
+  .refine(
+    (file) =>
+      file === null || file === undefined || file.size <= MAX_DOCUMENT_SIZE,
+    'File must be 5MB or less.',
+  )
+  .refine(
+    (file) =>
+      file === null ||
+      file === undefined ||
+      ACCEPTED_DOCUMENT_TYPES.includes(file.type),
     'File must be a PDF or JPG/PNG image.',
   )
 
@@ -72,8 +84,8 @@ export const driverRegisterSchema = z
     vehiclePlate: z.string().min(1, 'License plate is required.'),
     vehicleColor: z.string().min(1, 'Vehicle color is required.'),
     vehicleType: z.string().min(1, 'Vehicle type is required.'),
-    licenseFile: documentSchema,
-    registrationFile: documentSchema,
+    licenseFile: optionalDocumentSchema,
+    registrationFile: optionalDocumentSchema,
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match.',

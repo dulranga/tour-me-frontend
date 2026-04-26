@@ -8,7 +8,9 @@ import { api } from '#/lib/api/client'
 import { Button } from '#/components/ui/button'
 import type { DashboardListItem } from '#/lib/api/dashboard'
 
-export const Route = createFileRoute('/dashboard/admin/feedback')({
+export const Route = createFileRoute(
+  '/dashboard/administrator/feedback',
+)({
   component: AdminFeedbackPage,
 })
 

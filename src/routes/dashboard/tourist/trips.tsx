@@ -26,12 +26,13 @@ type Trip = {
   tripId: number
   itineraryId: number
   driverId: number
+  driverName: string
+  driverEmail: string
   pickupLocation: string
   destination: string
-  pickupTime: string
-  estimatedDuration: number
-  status: 'UPCOMING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'
-  createdAt: string
+  agreedPrice: number
+  status: string
+  vehicleDetails: string
 }
 
 function TouristTripsPage() {
@@ -67,18 +68,18 @@ function TouristTripsPage() {
       const item: DashboardListItem = {
         id: trip.tripId.toString(),
         title: `${trip.pickupLocation} → ${trip.destination}`,
-        subtitle: `${trip.status}`,
-        meta: new Date(trip.pickupTime).toLocaleDateString(),
+        subtitle: `Driver: ${trip.driverName} | Price: LKR ${trip.agreedPrice}`,
+        meta: trip.status,
         status: trip.status,
         statusVariant:
-          trip.status === 'UPCOMING'
-            ? 'secondary'
+          trip.status === 'CONFIRMED'
+            ? 'success'
             : trip.status === 'COMPLETED'
               ? 'success'
               : 'outline',
       }
 
-      if (trip.status === 'UPCOMING' || trip.status === 'IN_PROGRESS') {
+      if (trip.status === 'CONFIRMED' || trip.status === 'IN_PROGRESS') {
         groupedTrips.upcoming.items.push(item)
       } else if (trip.status === 'COMPLETED') {
         groupedTrips.completed.items.push(item)

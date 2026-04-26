@@ -8,7 +8,7 @@ import { api } from '#/lib/api/client'
 import { Button } from '#/components/ui/button'
 import type { DashboardListItem } from '#/lib/api/dashboard'
 
-export const Route = createFileRoute('/dashboard/admin/bids')({
+export const Route = createFileRoute('/dashboard/administrator/bids')({
   component: AdminBidsPage,
 })
 

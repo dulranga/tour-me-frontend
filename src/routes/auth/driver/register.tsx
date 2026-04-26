@@ -57,7 +57,7 @@ function DriverRegister() {
         body: {
           name: values.name,
           email: values.email,
-          passwordHash: values.password,
+          password: values.password,
           licenseNumber: values.vehiclePlate,
           vehicleDetails: `${values.vehicleMake} ${values.vehicleModel} ${values.vehicleYear}`,
         },
@@ -71,30 +71,60 @@ function DriverRegister() {
     resolver: zodResolver(driverRegisterSchema),
     mode: 'onBlur',
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      vehicleMake: '',
-      vehicleModel: '',
+      name: 'wedwed',
+      email: 'driver@edf.efed',
+      password: 'H6%x]QMu2De$Jm"',
+      confirmPassword: 'H6%x]QMu2De$Jm"',
+      vehicleMake: '2003',
+      vehicleModel: 'adfdf',
       vehicleYear: 2020,
       vehicleCapacity: 4,
-      vehiclePlate: '',
-      vehicleColor: '',
-      vehicleType: '',
+      vehiclePlate: 'dsfsdf',
+      vehicleColor: 'sdfdf',
+      vehicleType: 'wefewr',
       licenseFile: undefined,
       registrationFile: undefined,
     },
   })
 
-  const onSubmit = (values: DriverRegisterValues) => {
-    registerMutation.mutate(values)
+  const onSubmit = async (values: DriverRegisterValues) => {
+    try {
+      // Validate files are present before submission
+      if (!values.licenseFile || !(values.licenseFile instanceof File)) {
+        toast.error('Driver license document is required.')
+        return
+      }
+      if (
+        !values.registrationFile ||
+        !(values.registrationFile instanceof File)
+      ) {
+        toast.error('Vehicle registration document is required.')
+        return
+      }
+
+      await registerMutation.mutateAsync(values)
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Registration failed'
+      toast.error(errorMessage)
+    }
   }
 
   const handleNextStep = async () => {
-    const isValid = await form.trigger(stepFields[step])
-    if (isValid) {
-      setStep((current) => Math.min(current + 1, stepFields.length - 1))
+    try {
+      const fieldsToValidate = stepFields[step]
+      const isValid = await form.trigger(fieldsToValidate, {
+        shouldFocus: true,
+      })
+      if (isValid) {
+        setStep((current) => Math.min(current + 1, stepFields.length - 1))
+      } else {
+        toast.error('Please fill in all required fields correctly')
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Validation failed'
+      toast.error(errorMessage)
     }
   }
 
@@ -330,35 +360,17 @@ function DriverRegister() {
                 type="button"
                 onClick={handleNextStep}
                 className="sm:w-40"
-                disabled={form.formState.isValidating}
               >
-                {form.formState.isValidating ? 'Validating...' : 'Continue'}
+                Continue
               </Button>
             )}
           </div>
         </form>
       </Form>
 
-      {registerMutation.isError ? (
-        <div className="mt-6">
-          <FormNotice
-            variant="warning"
-            title="Registration failed"
-            description={
-              registerMutation.error instanceof Error
-                ? registerMutation.error.message
-                : 'Unable to submit registration right now.'
-            }
-          />
-        </div>
-      ) : null}
-
       <div className="mt-6 flex items-center justify-between text-sm text-text-secondary">
         <span>Already registered?</span>
-        <Link
-          to="/auth/driver/login"
-          className="text-accent-teal hover:underline"
-        >
+        <Link to="/auth/login" className="text-accent-teal hover:underline">
           Sign in
         </Link>
       </div>

@@ -22,7 +22,7 @@ import {
 } from '#/components/ui/dialog'
 import type { DashboardListData, DashboardListItem } from '#/lib/api/dashboard'
 
-export const Route = createFileRoute('/dashboard/admin/')({
+export const Route = createFileRoute('/dashboard/administrator/')({
   component: AdminDashboard,
 })
 
@@ -53,7 +53,7 @@ function AdminDashboard() {
   const { data: stats } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: () =>
-      api<AdminStats>('/admin/stats').catch(() => ({
+      api<AdminStats>('/administrator/stats').catch(() => ({
         pendingVerifications: 0,
         openDisputes: 0,
         completedTrips: 0,

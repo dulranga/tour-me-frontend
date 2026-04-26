@@ -72,7 +72,11 @@ function TouristRegister() {
               <FormItem>
                 <FormLabel>Full name</FormLabel>
                 <FormControl>
-                  <Input autoComplete="name" placeholder="Jordan Lee" {...field} />
+                  <Input
+                    autoComplete="name"
+                    placeholder="Jordan Lee"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -129,7 +133,9 @@ function TouristRegister() {
             className="w-full"
             disabled={registerMutation.isPending}
           >
-            {registerMutation.isPending ? 'Creating account...' : 'Create account'}
+            {registerMutation.isPending
+              ? 'Creating account...'
+              : 'Create account'}
           </Button>
         </form>
       </Form>
@@ -148,10 +154,7 @@ function TouristRegister() {
       ) : null}
       <div className="mt-6 flex items-center justify-between text-sm text-text-secondary">
         <span>Already have an account?</span>
-        <Link
-          to="/auth/tourist/login"
-          className="text-accent-teal hover:underline"
-        >
+        <Link to="/auth/login" className="text-accent-teal hover:underline">
           Sign in
         </Link>
       </div>

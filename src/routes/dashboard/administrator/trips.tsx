@@ -18,18 +18,28 @@ import {
   DialogTrigger,
 } from '#/components/ui/dialog'
 
-export const Route = createFileRoute('/dashboard/admin/trips')({
+export const Route = createFileRoute('/dashboard/administrator/trips')({
   component: AdminTripsPage,
 })
 
 type Trip = {
   tripId: number
   itineraryId: number
+  driverId: number
+  driverName: string
+  driverEmail: string
   pickupLocation: string
   destination: string
-  pickupTime: string
-  status: 'UPCOMING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'
-  createdAt: string
+  agreedPrice: number
+  status: string
+  vehicleDetails: string
+}
+
+type ApiResponse<T> = {
+  data: T
+  message: string
+  status: string
+  success: boolean
 }
 
 function AdminTripsPage() {
@@ -54,17 +64,15 @@ function AdminTripsPage() {
       tripMonitoring.items.push({
         id: trip.tripId.toString(),
         title: `${trip.pickupLocation} → ${trip.destination}`,
-        subtitle: `Trip #${trip.tripId}`,
-        meta: new Date(trip.pickupTime).toLocaleDateString(),
+        subtitle: `Driver: ${trip.driverName} | Price: LKR ${trip.agreedPrice}`,
+        meta: trip.status,
         status: trip.status,
         statusVariant:
           trip.status === 'COMPLETED'
             ? 'success'
-            : trip.status === 'IN_PROGRESS'
+            : trip.status === 'CONFIRMED'
               ? 'secondary'
-              : trip.status === 'CANCELLED'
-                ? 'destructive'
-                : 'outline',
+              : 'outline',
       })
     })
   }

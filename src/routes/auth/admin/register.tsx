@@ -23,7 +23,7 @@ import type { RegisterValues } from '#/components/auth/schemas'
 export const Route = createFileRoute('/auth/admin/register')({
   beforeLoad: () => {
     throw redirect({
-      to: '/auth/admin/login',
+      to: '/auth/login',
     })
   },
   component: AdminRegister,
@@ -66,7 +66,11 @@ function AdminRegister() {
               <FormItem>
                 <FormLabel>Full name</FormLabel>
                 <FormControl>
-                  <Input autoComplete="name" placeholder="Jordan Lee" {...field} />
+                  <Input
+                    autoComplete="name"
+                    placeholder="Jordan Lee"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -134,7 +138,7 @@ function AdminRegister() {
       ) : null}
       <div className="mt-6 flex items-center justify-between text-sm text-text-secondary">
         <span>Already have admin access?</span>
-        <Link to="/auth/admin/login" className="text-accent-teal hover:underline">
+        <Link to="/auth/login" className="text-accent-teal hover:underline">
           Sign in
         </Link>
       </div>

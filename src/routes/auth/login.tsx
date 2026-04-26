@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -19,28 +19,48 @@ import {
 import { Input } from '#/components/ui/input'
 import { api } from '#/lib/api/client'
 import { loginSchema } from '#/components/auth/schemas'
+import { useAuth } from '#/lib/AuthContext'
+import { UserRole } from '#/lib/auth'
 import type { LoginValues } from '#/components/auth/schemas'
 
-export const Route = createFileRoute('/auth/tourist/login')({
-  component: TouristLogin,
+export const Route = createFileRoute('/auth/login')({
+  component: Login,
 })
 
-function TouristLogin() {
+function Login() {
   const navigate = useNavigate()
+  const { refetchUser } = useAuth()
+
+  const getDashboardPath = (role: UserRole): string => {
+    switch (role) {
+      case UserRole.ADMIN:
+        return '/dashboard/administrator'
+      case UserRole.DRIVER:
+        return '/dashboard/driver'
+      case UserRole.TOURIST:
+        return '/dashboard/tourist'
+      default:
+        return '/dashboard'
+    }
+  }
+
   const loginMutation = useMutation({
     mutationFn: (values: LoginValues) =>
-      api('/auth/login', {
+      api<{ role: UserRole }>('/auth/login', {
         method: 'POST',
         body: {
           email: values.email,
           password: values.password,
         },
       }),
-    onSuccess: () => {
+    onSuccess: async (data) => {
       toast.success('Signed in successfully')
-      void navigate({ to: '/dashboard/tourist' })
+      await refetchUser()
+      const dashboardPath = getDashboardPath(data.role)
+      void navigate({ to: dashboardPath })
     },
   })
+
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -54,11 +74,7 @@ function TouristLogin() {
   }
 
   return (
-    <AuthLayout
-      kicker="Tourist"
-      title="Welcome back"
-      description="Log in to manage itineraries, bids, and upcoming trips."
-    >
+    <AuthLayout kicker="TourMe" title="Sign in" description="Welcome back">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -100,6 +116,7 @@ function TouristLogin() {
           </Button>
         </form>
       </Form>
+
       {loginMutation.isError ? (
         <div className="mt-6">
           <FormNotice
@@ -113,15 +130,6 @@ function TouristLogin() {
           />
         </div>
       ) : null}
-      <div className="mt-6 flex items-center justify-between text-sm text-text-secondary">
-        <span>New to TourMe?</span>
-        <Link
-          to="/auth/tourist/register"
-          className="text-accent-teal hover:underline"
-        >
-          Create tourist account
-        </Link>
-      </div>
     </AuthLayout>
   )
 }

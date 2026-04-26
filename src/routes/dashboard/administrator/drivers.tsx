@@ -19,7 +19,9 @@ import {
   DialogTrigger,
 } from '#/components/ui/dialog'
 
-export const Route = createFileRoute('/dashboard/admin/drivers')({
+export const Route = createFileRoute(
+  '/dashboard/administrator/drivers',
+)({
   component: AdminDriversPage,
 })
 

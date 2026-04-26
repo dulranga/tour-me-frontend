@@ -1,18 +1,18 @@
 import { useState } from 'react'
 
-import {
-  HeadContent,
-  Scripts,
-  createRootRoute,
-  Link,
-  useRouterState,
-} from '@tanstack/react-router'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Toaster } from 'sonner'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  createRootRoute,
+  HeadContent,
+  Link,
+  Scripts,
+} from '@tanstack/react-router'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { Toaster } from 'sonner'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
+import { AuthProvider } from '../lib/AuthContext'
 
 import appCss from '../styles.css?url'
 
@@ -44,13 +44,6 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const pathname = useRouterState({
-    select: (state) => state.location.pathname,
-  })
-  const isAuthRoute = pathname.startsWith('/auth')
-  const isDashboardRoute = pathname.startsWith('/dashboard')
-//   const hidePublicShell = isAuthRoute || isDashboardRoute
-  const hidePublicShell = isAuthRoute 
   const [queryClient] = useState(() => new QueryClient())
 
   return (
@@ -61,21 +54,23 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
         <QueryClientProvider client={queryClient}>
-          {hidePublicShell ? null : <Header />}
-          {children}
-          {hidePublicShell ? null : <Footer />}
-          <Toaster richColors position="top-right" />
-          <TanStackDevtools
-            config={{
-              position: 'bottom-right',
-            }}
-            plugins={[
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-            ]}
-          />
+          <AuthProvider>
+            <Header />
+            {children}
+            <Footer />
+            <Toaster richColors position="top-right" />
+            <TanStackDevtools
+              config={{
+                position: 'bottom-right',
+              }}
+              plugins={[
+                {
+                  name: 'Tanstack Router',
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
+              ]}
+            />
+          </AuthProvider>
         </QueryClientProvider>
         <Scripts />
       </body>
@@ -86,9 +81,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 function NotFound() {
   return (
     <main className="page-wrap flex min-h-[70vh] flex-col items-center justify-center px-4 py-16 text-center">
-      <p className="text-xs uppercase tracking-[0.3em] text-text-muted">
-        404
-      </p>
+      <p className="text-xs uppercase tracking-[0.3em] text-text-muted">404</p>
       <h1 className="mt-3 text-3xl font-semibold text-text-primary">
         Page not found
       </h1>

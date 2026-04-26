@@ -23,6 +23,7 @@ import {
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { api } from '#/lib/api/client'
+import { Badge } from '#/components/ui/badge'
 
 export const Route = createFileRoute('/dashboard/tourist/')({
   component: TouristDashboard,
@@ -62,8 +63,10 @@ function TouristDashboard() {
   // Fetch user bids
   const { data: bidsResponse, isLoading: isLoadingBids } = useQuery({
     queryKey: ['user-bids', user.userId],
-    queryFn: () => api(`/bids/itinerary/*/user/${user.userId}`),
+    queryFn: () => api<any[]>(`/bids/my-bids`),
   })
+
+  const bidsData = bidsResponse ?? []
 
   // Calculate stats from real data
   const stats = [
@@ -79,20 +82,14 @@ function TouristDashboard() {
     },
     {
       title: 'Open bids',
-      value: String(
-        Array.isArray(bidsResponse)
-          ? bidsResponse.filter((b: any) => b.status === 'PENDING').length
-          : 0,
-      ),
+      value: String(bidsData.filter((b: any) => b.status === 'PENDING').length),
       description: 'Awaiting your response',
       icon: 'handshake' as const,
     },
     {
       title: 'Accepted trips',
       value: String(
-        Array.isArray(bidsResponse)
-          ? bidsResponse.filter((b: any) => b.status === 'SELECTED').length
-          : 0,
+        bidsData.filter((b: any) => b.status === 'ACCEPTED').length,
       ),
       description: 'Driver confirmed',
       icon: 'calendar' as const,
@@ -215,11 +212,11 @@ function TouristDashboard() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="duration">Duration (minutes)</Label>
+              <Label htmlFor="duration">Days planned for trip</Label>
               <Input
                 id="duration"
                 type="number"
-                placeholder="120"
+                placeholder="1"
                 value={formData.estimatedDuration}
                 onChange={(e) =>
                   setFormData((prev) => ({
@@ -280,16 +277,52 @@ function TouristDashboard() {
       </DialogContent>
     </Dialog>
   )
-  const renderBidUpdateAction = () => (
-    <Button size="sm" variant="outline" disabled>
-      Bid received
-    </Button>
-  )
+  const renderBidUpdateAction = (item: any) => {
+    if (item.status === 'ACCEPTED') {
+      return (
+        <Badge variant="success" className="h-9 px-3">
+          Confirmed
+        </Badge>
+      )
+    }
+
+    if (item.status !== 'PENDING') return null
+
+    return (
+      <Button
+        size="sm"
+        onClick={() => selectBidMutation.mutate(item.id)}
+        disabled={selectBidMutation.isPending}
+      >
+        {selectBidMutation.isPending ? 'Accepting...' : 'Accept bid'}
+      </Button>
+    )
+  }
   const renderTripStatusAction = () => (
     <Button size="sm" variant="outline" disabled>
       View details
     </Button>
   )
+
+  // Select bid mutation
+  const selectBidMutation = useMutation({
+    mutationFn: (bidId: string) =>
+      api(`/bids/${bidId}/select?touristId=${user.userId}`, {
+        method: 'POST',
+      }),
+    onSuccess: () => {
+      toast.success('Bid accepted successfully')
+      void queryClient.invalidateQueries({
+        queryKey: ['user-itineraries', user.userId],
+      })
+      void queryClient.invalidateQueries({
+        queryKey: ['user-bids', user.userId],
+      })
+    },
+    onError: (e) => {
+      toast.error(e.message || 'Failed to accept bid')
+    },
+  })
 
   return (
     <DashboardShell
@@ -345,23 +378,19 @@ function TouristDashboard() {
           <DashboardListCard
             title="Received bids"
             description="Drivers bidding on your itineraries."
-            items={
-              Array.isArray(bidsResponse)
-                ? bidsResponse.map((bid: any) => ({
-                    id: bid.bidId?.toString(),
-                    title: `LKR ${bid.bidAmount}`,
-                    subtitle: bid.notes || 'No notes',
-                    meta: new Date(bid.submittedAt).toLocaleDateString(),
-                    status: bid.status,
-                    statusVariant:
-                      bid.status === 'PENDING'
-                        ? 'warning'
-                        : bid.status === 'SELECTED'
-                          ? 'success'
-                          : 'secondary',
-                  }))
-                : []
-            }
+            items={bidsData.map((bid: any) => ({
+              id: bid.bidId?.toString(),
+              title: `LKR ${bid.amount}`,
+              subtitle: `Driver: ${bid.driver?.name} (${bid.driver?.vehicleDetails})`,
+              meta: bid.status,
+              status: bid.status,
+              statusVariant:
+                bid.status === 'PENDING'
+                  ? 'warning'
+                  : bid.status === 'ACCEPTED'
+                    ? 'success'
+                    : 'secondary',
+            }))}
             emptyState={isLoadingBids ? 'Loading bids...' : 'No bids yet'}
             renderItemActions={renderBidUpdateAction}
           />

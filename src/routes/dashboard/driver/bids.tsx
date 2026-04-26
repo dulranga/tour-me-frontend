@@ -13,13 +13,16 @@ export const Route = createFileRoute('/dashboard/driver/bids')({
 
 type DriverBid = {
   bidId: number
-  driverId: number
-  itineraryId: number
-  bidAmount: number
-  estimatedArrivalTime?: string
-  notes?: string
-  status: 'PENDING' | 'SELECTED' | 'DECLINED'
-  submittedAt: string
+  amount: number
+  status: 'PENDING' | 'ACCEPTED' | 'DECLINED'
+  driver: {
+    name: string
+    email: string
+    licenseNumber: string
+    role: string
+    userId: number
+    vehicleDetails: string
+  }
 }
 
 function DriverBidsPage() {
@@ -58,23 +61,23 @@ function DriverBidsPage() {
     bids.forEach((bid) => {
       const item: DashboardListItem = {
         id: bid.bidId.toString(),
-        title: `Itinerary #${bid.itineraryId} - LKR ${bid.bidAmount}`,
-        subtitle: bid.notes || 'No notes',
-        meta: new Date(bid.submittedAt).toLocaleDateString(),
+        title: `Bid #${bid.bidId} - LKR ${bid.amount}`,
+        subtitle: bid.driver.vehicleDetails,
+        meta: bid.status,
         status: bid.status,
         statusVariant:
           bid.status === 'PENDING'
             ? 'warning'
-            : bid.status === 'SELECTED'
+            : bid.status === 'ACCEPTED'
               ? 'success'
               : 'destructive',
       }
 
       if (bid.status === 'PENDING') {
         groupedBids.pending.items.push(item)
-      } else if (bid.status === 'SELECTED') {
+      } else if (bid.status === 'ACCEPTED') {
         groupedBids.selected.items.push(item)
-      } else if (bid.status === 'DECLINED') {
+      } else {
         groupedBids.declined.items.push(item)
       }
     })
@@ -89,7 +92,7 @@ function DriverBidsPage() {
     >
       {isLoading && <p className="text-sm text-text-muted">Loading bids...</p>}
       {isError && (
-        <p className="rounded-md border border-border-subtle bg-bg-elevated px-3 py-2 text-sm text-[color:var(--status-error)]">
+        <p className="rounded-md border border-border-subtle bg-bg-elevated px-3 py-2 text-sm text-(--status-error)">
           {error instanceof Error ? error.message : 'Failed to load bids'}
         </p>
       )}

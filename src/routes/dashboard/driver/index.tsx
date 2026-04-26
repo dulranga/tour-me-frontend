@@ -6,6 +6,7 @@ import type { LucideIcon } from 'lucide-react'
 import { DashboardListCard } from '#/components/dashboard/DashboardListCard'
 import { DashboardShell } from '#/components/dashboard/DashboardShell'
 import { StatCard } from '#/components/dashboard/StatCard'
+import { SubmitBidDialog } from '#/components/dashboard/SubmitBidDialog'
 import { driverNavItems } from '#/components/dashboard/navigation'
 import { api } from '#/lib/api/client'
 import { Button } from '#/components/ui/button'
@@ -30,10 +31,16 @@ export const Route = createFileRoute('/dashboard/driver/')({
 
 type DriverBid = {
   bidId: number
-  itineraryId: number
-  bidAmount: number
+  amount: number
   status: string
-  submittedAt: string
+  driver: {
+    name: string
+    email: string
+    licenseNumber: string
+    role: string
+    userId: number
+    vehicleDetails: string
+  }
 }
 
 type UpcomingTrip = {
@@ -42,6 +49,21 @@ type UpcomingTrip = {
   destination: string
   pickupTime: string
   status: string
+}
+
+type Itinerary = {
+  itineraryId: number
+  pickupLocation: string
+  destination: string
+  pickupTime: string
+  status: string
+  tourist: {
+    name: string
+    email: string
+    userId: number
+    role: string
+  }
+  bids: any[]
 }
 
 type DriverStats = {
@@ -77,6 +99,14 @@ function DriverDashboard() {
     queryKey: ['driver-upcoming-trips', user.userId],
     queryFn: () => api<UpcomingTrip[]>(`/trips/driver/${user.userId}`),
   })
+
+  // Fetch available itineraries (marketplace)
+  const { data: marketplace, isLoading: isLoadingMarketplace } = useQuery({
+    queryKey: ['available-itineraries'],
+    queryFn: () => api<Itinerary[]>(`/itineraries/available`),
+  })
+
+  const marketplaceItems = marketplace ?? []
 
   const iconMap: Record<string, LucideIcon> = {
     clipboard: ClipboardList,
@@ -125,9 +155,9 @@ function DriverDashboard() {
       .forEach((bid) => {
         bidPipeline.items.push({
           id: bid.bidId.toString(),
-          title: `Itinerary #${bid.itineraryId}`,
-          subtitle: `LKR ${bid.bidAmount}`,
-          meta: new Date(bid.submittedAt).toLocaleDateString(),
+          title: `Bid #${bid.bidId}`,
+          subtitle: `LKR ${bid.amount}`,
+          meta: bid.status,
           status: 'Pending',
           statusVariant: 'secondary',
         })
@@ -153,6 +183,19 @@ function DriverDashboard() {
     })
   }
 
+  const marketplaceData: DashboardListData = {
+    title: 'Marketplace',
+    description: 'Available itineraries to bid on',
+    items: marketplaceItems.slice(0, 5).map((item) => ({
+      id: item.itineraryId.toString(),
+      title: `${item.pickupLocation} → ${item.destination}`,
+      subtitle: `Tourist: ${item.tourist.name} | Bids: ${item.bids.length}`,
+      meta: item.status,
+      status: 'Available',
+      statusVariant: 'warning',
+    })),
+  }
+
   return (
     <DashboardShell
       title="Driver dashboard"
@@ -167,7 +210,7 @@ function DriverDashboard() {
         </>
       }
     >
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {/* <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {statCards.map((stat) => {
           const Icon = iconMap[stat.icon] ?? ClipboardList
 
@@ -182,10 +225,19 @@ function DriverDashboard() {
             />
           )
         })}
-      </section>
+      </section> */}
 
       <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <div className="space-y-6">
+          <DashboardListCard
+            {...marketplaceData}
+            renderItemActions={(item) => <SubmitBidDialog item={item} />}
+            emptyState={
+              isLoadingMarketplace
+                ? 'Loading itineraries...'
+                : 'No itineraries available'
+            }
+          />
           <DashboardListCard {...bidPipeline} />
           <DashboardListCard {...upcomingTrips} />
         </div>

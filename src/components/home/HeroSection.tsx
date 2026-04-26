@@ -20,7 +20,9 @@ export function HeroSection() {
             </h1>
 
             <p className="text-base sm:text-lg text-text-secondary mb-6 sm:mb-8 max-w-2xl leading-relaxed">
-              TourMe connects tourists seeking reliable drivers with drivers looking for meaningful trips. Create your itinerary, get competitive bids, and travel with confidence.
+              TourMe connects tourists seeking reliable drivers with drivers
+              looking for meaningful trips. Create your itinerary, get
+              competitive bids, and travel with confidence.
             </p>
 
             {/* CTA Buttons */}
@@ -63,11 +65,11 @@ export function HeroSection() {
           {/* Illustration placeholder */}
           <div className="hidden lg:flex items-center justify-center">
             <div className="relative w-full h-80 bg-bg-elevated rounded-lg border border-border-subtle flex items-center justify-center">
-              <div className="text-center">
-                <div className="mb-3 text-4xl">🗺️</div>
-                <p className="text-text-muted text-sm">Travel Illustration</p>
-                <p className="text-text-disabled text-xs mt-1">(Add your illustration here)</p>
-              </div>
+              <img
+                src="https://avatar.vercel.sh/asas"
+                alt=""
+                className="w-full h-full"
+              />
             </div>
           </div>
         </div>

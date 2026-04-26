@@ -6,17 +6,12 @@ export const Route = createFileRoute('/dashboard')({
   beforeLoad: async (req) => {
     // Verify authentication via /api/auth/me
     const user = await verifyAuth()
-    const role =
-      (user?.role.toLowerCase() as
-        | 'tourist'
-        | 'driver'
-        | 'admin'
-        | undefined) || 'tourist'
+    const role = user?.role.toLowerCase() as 'tourist' | 'driver' | 'admin'
 
     // If not authenticated, redirect to tourist login
     if (!user) {
       throw redirect({
-        to: `/auth/${role}/login`,
+        to: `/auth/login`,
       })
     }
 

@@ -78,37 +78,37 @@ export const driverNavItems: DashboardNavItem[] = [
 export const adminNavItems: DashboardNavItem[] = [
   {
     label: 'Overview',
-    to: '/dashboard/admin',
+    to: '/dashboard/administrator',
     description: 'System health and queues',
   },
   {
     label: 'Drivers',
-    to: '/dashboard/admin/drivers',
+    to: '/dashboard/administrator/drivers',
     description: 'Verification and status',
   },
   {
     label: 'Tourists',
-    to: '/dashboard/admin/tourists',
+    to: '/dashboard/administrator/tourists',
     description: 'Accounts and reports',
   },
   {
     label: 'Trips',
-    to: '/dashboard/admin/trips',
+    to: '/dashboard/administrator/trips',
     description: 'Live trip oversight',
   },
   {
     label: 'Bids',
-    to: '/dashboard/admin/bids',
+    to: '/dashboard/administrator/bids',
     description: 'Marketplace activity',
   },
   {
     label: 'Disputes',
-    to: '/dashboard/admin/disputes',
+    to: '/dashboard/administrator/disputes',
     description: 'Resolution queue',
   },
   {
     label: 'Feedback',
-    to: '/dashboard/admin/feedback',
+    to: '/dashboard/administrator/feedback',
     description: 'Moderation tasks',
   },
 ]

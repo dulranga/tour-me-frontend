@@ -4,6 +4,9 @@ import { Badge } from '#/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/components/ui/card'
 import { cn } from '#/lib/utils'
 
+/**
+ * Represents a single item in the dashboard list
+ */
 type DashboardListItem = {
   id?: string
   title: string
@@ -13,6 +16,9 @@ type DashboardListItem = {
   statusVariant?: 'default' | 'secondary' | 'outline' | 'success' | 'warning' | 'destructive'
 }
 
+/**
+ * Props for the DashboardListCard component
+ */
 type DashboardListCardProps = {
   title: string
   description?: string

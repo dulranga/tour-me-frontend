@@ -188,8 +188,10 @@ function DriverDashboard() {
     description: 'Available itineraries to bid on',
     items: marketplaceItems.slice(0, 5).map((item) => ({
       id: item.itineraryId.toString(),
-      title: `${item.pickupLocation} → ${item.destination}`,
+      title: `${item.pickupLocation.split(' | ')[0]} → ${item.destination.split(' | ')[0]}`,
       subtitle: `Tourist: ${item.tourist.name} | Bids: ${item.bids.length}`,
+      rawTitle: item.pickupLocation,
+      rawSubtitle: item.destination,
       meta: item.status,
       status: 'Available',
       statusVariant: 'warning',

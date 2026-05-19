@@ -1,3 +1,4 @@
+import { User, UserCircle2 } from 'lucide-react'
 import { Card, CardContent } from '#/components/ui/card'
 
 export function TrustSection() {
@@ -13,21 +14,21 @@ export function TrustSection() {
         'TourMe made planning my trip so easy. I got 5 bids within hours and found an amazing driver!',
       author: 'Sarah Johnson',
       role: 'Tourist',
-      avatar: '👩',
+      icon: <User className="h-5 w-5" />,
     },
     {
       quote:
         'Great platform to earn extra income. I love the flexibility of choosing which trips to accept.',
       author: 'Michael Chen',
       role: 'Driver',
-      avatar: '👨',
+      icon: <UserCircle2 className="h-5 w-5" />,
     },
     {
       quote:
         'The verification process gave me peace of mind. I felt safe throughout my entire trip.',
       author: 'Emma Wilson',
       role: 'Tourist',
-      avatar: '👩‍🦰',
+      icon: <User className="h-5 w-5" />,
     },
   ]
 
@@ -65,12 +66,16 @@ export function TrustSection() {
                   "{testimonials[0].quote}"
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="text-3xl">{testimonials[0].avatar}</div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-bg-hover text-text-secondary">
+                    {testimonials[0].icon}
+                  </div>
                   <div>
                     <p className="font-semibold text-text-primary text-sm">
                       {testimonials[0].author}
                     </p>
-                    <p className="text-xs text-text-muted">{testimonials[0].role}</p>
+                    <p className="text-xs text-text-muted">
+                      {testimonials[0].role}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -89,12 +94,16 @@ export function TrustSection() {
                     "{testimonial.quote}"
                   </p>
                   <div className="flex items-center gap-3">
-                    <div className="text-3xl">{testimonial.avatar}</div>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-bg-hover text-text-secondary">
+                      {testimonial.icon}
+                    </div>
                     <div>
                       <p className="font-semibold text-text-primary text-sm">
                         {testimonial.author}
                       </p>
-                      <p className="text-xs text-text-muted">{testimonial.role}</p>
+                      <p className="text-xs text-text-muted">
+                        {testimonial.role}
+                      </p>
                     </div>
                   </div>
                 </CardContent>

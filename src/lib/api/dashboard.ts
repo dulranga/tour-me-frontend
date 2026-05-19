@@ -10,6 +10,8 @@ export type DashboardListItem = {
   id?: string
   title: string
   subtitle?: string
+  rawTitle?: string
+  rawSubtitle?: string
   meta?: string
   status?: string
   statusVariant?: DashboardStatusVariant

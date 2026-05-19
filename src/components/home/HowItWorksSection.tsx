@@ -1,102 +1,88 @@
-import { ArrowRight } from 'lucide-react'
+import { ClipboardList, Gavel, UserCheck, Star, ArrowRight } from 'lucide-react'
 
 export function HowItWorksSection() {
   const steps = [
     {
       number: 1,
       title: 'Create Itinerary',
-      description: 'Tourist creates a multi-destination itinerary with specific dates and preferences.',
-      icon: '📋',
+      description:
+        'Create your multi-destination plan with dates and preferences in seconds.',
+      icon: <ClipboardList className="h-6 w-6" />,
     },
     {
       number: 2,
       title: 'Drivers Bid',
-      description: 'Verified drivers review the itinerary and submit their competitive bids.',
-      icon: '💰',
+      description:
+        'Verified drivers review your plan and submit competitive price offers.',
+      icon: <Gavel className="h-6 w-6" />,
     },
     {
       number: 3,
       title: 'Select Driver',
-      description: 'Tourist compares bids, reviews, and selects the best driver for their needs.',
-      icon: '✅',
+      description:
+        'Compare bids, read reviews, and choose the best driver for your trip.',
+      icon: <UserCheck className="h-6 w-6" />,
     },
     {
       number: 4,
       title: 'Complete & Rate',
-      description: 'Enjoy the trip and rate your driver to build a trustworthy community.',
-      icon: '⭐',
+      description:
+        'Enjoy your journey and rate your experience to help the community grow.',
+      icon: <Star className="h-6 w-6" />,
     },
   ]
 
   return (
-    <section className="bg-bg-elevated py-12 px-4 sm:py-16 sm:px-6 lg:py-20 lg:px-8">
+    <section className="bg-bg-base py-16 px-4 sm:py-20 sm:px-6 lg:py-28 lg:px-8 overflow-hidden">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-12 sm:mb-16 text-center">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-text-primary mb-3 sm:mb-4">
+        <div className="mb-16 sm:mb-20 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary mb-4">
             How it works
           </h2>
-          <p className="text-base sm:text-lg text-text-secondary max-w-2xl mx-auto">
-            Simple, transparent, and designed to connect the right people.
+          <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+            A simple four-step process to get you on the road with the best
+            local drivers.
           </p>
         </div>
 
-        {/* Mobile/Tablet: Vertical timeline */}
-        <div className="lg:hidden space-y-6 sm:space-y-8">
-          {steps.map((step, idx) => (
-            <div key={step.number} className="relative pl-12 sm:pl-16">
-              {/* Timeline line */}
-              {idx !== steps.length - 1 && (
-                <div className="absolute left-4 sm:left-6 top-12 sm:top-14 h-8 w-1 bg-border-subtle" />
-              )}
+        <div className="relative">
+          <div className="grid gap-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+            {steps.map((step, idx) => (
+              <div key={step.number} className="relative group text-center">
+                {/* Large Blended Connector Arrow (Desktop) */}
+                {idx !== steps.length - 1 && (
+                  <div className="hidden lg:flex absolute top-8 left-1/2 w-full items-center justify-center -z-10">
+                    <ArrowRight className="h-12 w-12 text-border-subtle opacity-30 stroke-[1px]" />
+                  </div>
+                )}
 
-              {/* Step circle */}
-              <div className="absolute left-0 top-0 h-9 sm:h-12 w-9 sm:w-12 rounded-full bg-accent-teal flex items-center justify-center text-white font-bold text-sm sm:text-lg">
-                {step.number}
-              </div>
+                {/* Vertical Connector Line (Mobile) */}
+                {idx !== steps.length - 1 && (
+                  <div className="lg:hidden absolute left-1/2 -bottom-8 w-[2px] h-8 bg-border-subtle" />
+                )}
 
-              {/* Content */}
-              <div>
-                <div className="text-2xl sm:text-3xl mb-2">{step.icon}</div>
-                <h3 className="text-lg sm:text-xl font-semibold text-text-primary mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-sm sm:text-base text-text-secondary">
-                  {step.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Desktop: Horizontal grid with connectors */}
-        <div className="hidden lg:grid lg:grid-cols-4 lg:gap-6">
-          {steps.map((step, idx) => (
-            <div key={step.number} className="relative">
-              {/* Connector arrow */}
-              {idx !== steps.length - 1 && (
-                <div className="absolute -right-3 top-12 h-1 w-6 bg-border-subtle flex items-center justify-center">
-                  <ArrowRight className="h-4 w-4 text-border-default absolute -right-6" />
-                </div>
-              )}
-
-              {/* Step content */}
-              <div className="text-center">
-                {/* Step circle */}
-                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-accent-teal text-white font-bold text-xl">
-                  {step.number}
+                {/* Step Indicator and Icon */}
+                <div className="relative mb-6 flex justify-center">
+                  <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-bg-elevated border-2 border-border-subtle text-primary group-hover:border-primary/50 transition-all duration-300">
+                    {step.icon}
+                    <div className="absolute -top-3 -right-3 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-[12px] font-bold text-white ring-4 ring-bg-base">
+                      {step.number}
+                    </div>
+                  </div>
                 </div>
 
-                {/* Icon and text */}
-                <div className="text-4xl mb-3">{step.icon}</div>
-                <h3 className="text-lg font-semibold text-text-primary mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-sm text-text-secondary">
-                  {step.description}
-                </p>
+                {/* Content */}
+                <div className="relative z-10 px-4">
+                  <h3 className="text-xl font-bold text-text-primary mb-3">
+                    {step.title}
+                  </h3>
+                  <p className="text-base text-text-secondary leading-relaxed max-w-[280px] mx-auto">
+                    {step.description}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

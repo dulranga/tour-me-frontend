@@ -1,4 +1,4 @@
-import { CheckCircle } from 'lucide-react'
+import { CheckCircle, Plane, Car } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 
 export function ValuePropSection() {
@@ -10,7 +10,8 @@ export function ValuePropSection() {
             Why choose TourMe?
           </h2>
           <p className="text-base sm:text-lg text-text-secondary max-w-2xl mx-auto">
-            Designed for both travelers and drivers to create meaningful connections.
+            Designed for both travelers and drivers to create meaningful
+            connections.
           </p>
         </div>
 
@@ -18,12 +19,17 @@ export function ValuePropSection() {
           {/* For Tourists */}
           <Card className="bg-bg-elevated border-border-subtle hover:border-border-default transition-colors">
             <CardHeader>
-              <div className="mb-3 text-4xl">✈️</div>
-              <CardTitle className="text-xl sm:text-2xl">For Tourists</CardTitle>
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Plane className="h-6 w-6" />
+              </div>
+              <CardTitle className="text-xl sm:text-2xl">
+                For Tourists
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-base text-text-secondary leading-relaxed">
-                Create your perfect itinerary and let drivers compete for your business with transparent, competitive bids.
+                Create your perfect itinerary and let drivers compete for your
+                business with transparent, competitive bids.
               </p>
 
               <ul className="space-y-3">
@@ -34,7 +40,9 @@ export function ValuePropSection() {
                 ].map((benefit, idx) => (
                   <li key={idx} className="flex gap-3 items-start">
                     <CheckCircle className="h-5 w-5 text-status-success mt-0.5 flex-shrink-0" />
-                    <span className="text-base text-text-primary">{benefit}</span>
+                    <span className="text-base text-text-primary">
+                      {benefit}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -44,12 +52,15 @@ export function ValuePropSection() {
           {/* For Drivers */}
           <Card className="bg-bg-elevated border-border-subtle hover:border-border-default transition-colors">
             <CardHeader>
-              <div className="mb-3 text-4xl">🚗</div>
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Car className="h-6 w-6" />
+              </div>
               <CardTitle className="text-xl sm:text-2xl">For Drivers</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-base text-text-secondary leading-relaxed">
-                Accept trips that match your schedule and rates. Build your reputation through verified reviews.
+                Accept trips that match your schedule and rates. Build your
+                reputation through verified reviews.
               </p>
 
               <ul className="space-y-3">
@@ -60,7 +71,9 @@ export function ValuePropSection() {
                 ].map((benefit, idx) => (
                   <li key={idx} className="flex gap-3 items-start">
                     <CheckCircle className="h-5 w-5 text-status-success mt-0.5 flex-shrink-0" />
-                    <span className="text-base text-text-primary">{benefit}</span>
+                    <span className="text-base text-text-primary">
+                      {benefit}
+                    </span>
                   </li>
                 ))}
               </ul>

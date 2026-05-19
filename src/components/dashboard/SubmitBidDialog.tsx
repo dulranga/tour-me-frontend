@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { Button } from '#/components/ui/button'
@@ -17,6 +17,7 @@ import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { api } from '#/lib/api/client'
 import type { DashboardListItem } from '#/lib/api/dashboard'
+import { RouteViewer } from './RouteViewer'
 
 interface SubmitBidDialogProps {
   item: DashboardListItem
@@ -29,6 +30,8 @@ export function SubmitBidDialog({
   trigger,
   onSuccess,
 }: SubmitBidDialogProps) {
+  console.log(item)
+
   const queryClient = useQueryClient()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [bidAmount, setBidAmount] = useState('')
@@ -71,19 +74,47 @@ export function SubmitBidDialog({
     })
   }
 
+  // Parse location coordinates from the title/subtitle if available (format: "Address | lat,lng")
+  // Note: the DashboardListItem in marketplace might vary, so we need cautious parsing
+  const extractCoords = (str?: string) => {
+    if (!str || !str.includes(' | ')) return null
+    const parts = str.split(' | ')
+    const coordParts = parts[parts.length - 1].split(',')
+    if (coordParts.length !== 2) return null
+    return {
+      lat: parseFloat(coordParts[0]),
+      lng: parseFloat(coordParts[1]),
+    }
+  }
+
+  // Assuming item.title and item.subtitle contain the full location strings from marketplace
+  // However, we now prefer rawTitle and rawSubtitle if provided by the marketplace
+  const pickup = extractCoords(item.rawTitle || item.title)
+  const destination = extractCoords(item.rawSubtitle || item.subtitle)
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         {trigger || <Button size="sm">Submit bid</Button>}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Submit bid</DialogTitle>
           <DialogDescription>
-            Provide a bid amount for {item.title}.
+            Provide a bid amount for{' '}
+            {item.title?.split(' | ')[1]
+              ? item.title.split(' | ')[0]
+              : item.title}
+            .
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">
+          {pickup && destination && (
+            <div className="space-y-2">
+              <Label>Route Preview</Label>
+              <RouteViewer pickup={pickup} destination={destination} />
+            </div>
+          )}
           <div className="grid gap-2">
             <Label htmlFor="bid-amount">Bid amount (LKR)</Label>
             <Input

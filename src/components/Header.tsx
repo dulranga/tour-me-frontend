@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { useQueryClient } from '@tanstack/react-query'
-import { Menu, X, LogOut } from 'lucide-react'
-import ThemeToggle from './ThemeToggle'
-import { Button } from '#/components/ui/button'
+import { Menu, X, LogOut, Car } from 'lucide-react'
 import { useAuth } from '#/lib/AuthContext'
 import { logout } from '#/lib/auth'
+import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { Button } from '#/components/ui/button'
+import ThemeToggle from './ThemeToggle'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -49,12 +49,15 @@ export default function Header() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border-subtle bg-bg-elevated">
+    <header className="sticky top-0 z-100 border-b border-border-subtle bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Branding */}
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <span className="text-2xl">🚗</span>
+          <Link
+            to="/"
+            className="flex items-center gap-2 shrink-0 text-primary"
+          >
+            <Car className="h-6 w-6" />
             <span className="font-bold text-lg text-text-primary hidden sm:inline">
               TourMe
             </span>
@@ -62,7 +65,7 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           {!user && (
-            <nav className="hidden lg:flex items-center gap-8 bg-bg-elevated rounded-lg px-6 py-2">
+            <nav className="hidden lg:flex items-center gap-8 px-6 py-2">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
@@ -76,44 +79,43 @@ export default function Header() {
           )}
 
           {/* Right Side: Sign In / User Menu + Theme Toggle */}
-          <div className="flex items-center gap-4">
-            {isLoading ? (
-              <div className="hidden lg:block h-9 w-20 bg-bg-hover rounded animate-pulse" />
-            ) : user ? (
-              <>
-                <div className="hidden lg:flex items-center gap-3">
-                  <div className="text-right">
-                    <div className="text-sm font-medium text-text-primary">
-                      {user.name}
-                    </div>
-                    <div className="text-xs text-text-muted capitalize">
-                      {user.role.toLowerCase()}
-                    </div>
-                  </div>
-                  <Link
-                    to={`/dashboard/${user.role.toLowerCase()}`}
-                    className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
-                  >
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="p-2 text-text-secondary hover:text-text-primary transition-colors"
-                    aria-label="Logout"
-                  >
-                    <LogOut size={18} />
-                  </button>
-                </div>
-              </>
-            ) : (
-              <Link to="/auth/login" className="hidden lg:block">
-                <Button variant="outline" size="sm">
+          <div className="flex items-center gap-3">
+            {!user && (
+              <Link to="/auth/login" className="hidden lg:block mr-2">
+                <Button variant="ghost" size="sm" className="font-medium">
                   Sign In
                 </Button>
               </Link>
             )}
 
             <ThemeToggle />
+
+            {user && (
+              <div className="hidden lg:flex items-center gap-3 ml-2 pl-3 border-l border-border-subtle">
+                <div className="text-right">
+                  <div className="text-sm font-medium text-text-primary">
+                    {user.name}
+                  </div>
+                  <div className="text-xs text-text-muted capitalize">
+                    {user.role.toLowerCase()}
+                  </div>
+                </div>
+
+                <Link
+                  to={`/dashboard/${user.role.toLowerCase()}`}
+                  className="flex h-10 items-center px-4 rounded-lg bg-primary !text-white text-sm font-medium hover:bg-primary/90 transition-all"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="p-2 text-text-secondary hover:text-text-destructive transition-colors"
+                  aria-label="Logout"
+                >
+                  <LogOut size={18} />
+                </button>
+              </div>
+            )}
 
             {/* Mobile Menu Button */}
             <button
@@ -134,7 +136,7 @@ export default function Header() {
                 className="absolute inset-0 bg-bg-overlay"
                 onClick={closeMenu}
               />
-              <div className="absolute right-0 top-0 flex h-full w-72 flex-col border-l border-border-subtle bg-bg-elevated shadow-lg">
+              <div className="absolute right-0 top-0 flex h-full w-72 flex-col border-l border-border-subtle bg-background shadow-lg">
                 <div className="flex items-center justify-between border-b border-border-subtle px-4 py-4">
                   <span className="text-sm font-semibold text-text-primary">
                     Menu
@@ -169,10 +171,11 @@ export default function Header() {
                           {user.role.toLowerCase()}
                         </div>
                       </div>
+
                       <Link
                         to={`/dashboard/${user.role.toLowerCase()}`}
                         onClick={closeMenu}
-                        className="block rounded-md border border-transparent px-3 py-2 text-sm font-medium text-text-secondary transition-colors hover:border-border-subtle hover:bg-bg-hover hover:text-text-primary"
+                        className="block rounded-md border border-transparent px-3 py-2 text-sm font-medium transition-colors hover:border-border-subtle hover:bg-bg-hover text-foreground"
                       >
                         Dashboard
                       </Link>

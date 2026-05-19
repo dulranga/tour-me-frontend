@@ -57,6 +57,8 @@ const mapAvailableItineraries = (
     id: String(itinerary.itineraryId),
     title: `${itinerary.pickupLocation} to ${itinerary.destination}`,
     subtitle: `Tourist: ${itinerary.tourist.name}`,
+    rawTitle: itinerary.pickupLocation,
+    rawSubtitle: itinerary.destination,
     meta: `${itinerary.bids.length} bids`,
     status: itinerary.status,
     statusVariant: getStatusVariant(itinerary.status),

@@ -32,6 +32,7 @@ type Itinerary = {
   pickupLocation: string
   destination: string
   pickupTime: string
+  estimatedDistance?: number
   estimatedDuration: number
   maxBudget: number
   numberOfPassengers: number
@@ -162,7 +163,7 @@ function TouristItinerariesPage() {
       const item: DashboardListItem = {
         id: it.itineraryId.toString(),
         title: `${it.pickupLocation} → ${it.destination}`,
-        subtitle: `${it.numberOfPassengers} passenger${it.numberOfPassengers > 1 ? 's' : ''}`,
+        subtitle: `${it.numberOfPassengers} passenger${it.numberOfPassengers > 1 ? 's' : ''}${it.estimatedDistance != null ? ` | ${it.estimatedDistance.toFixed(1)} km` : ''}${it.estimatedDuration ? ` | ${it.estimatedDuration} min` : ''}`,
         meta: new Date(it.pickupTime).toLocaleDateString(),
         status: it.status,
         statusVariant:

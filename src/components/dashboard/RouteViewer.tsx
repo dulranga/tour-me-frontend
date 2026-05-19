@@ -8,6 +8,12 @@ import {
 import L from 'leaflet'
 import { useEffect, useState } from 'react'
 import { Loader2 } from 'lucide-react'
+import {
+  fetchRouteEstimate,
+  formatDistance,
+  formatDuration,
+  type RouteEstimate,
+} from '#/lib/osrm'
 
 interface Point {
   lat: number
@@ -46,35 +52,44 @@ function MapBounds({
 }
 
 export function RouteViewer({ pickup, destination }: RouteViewerProps) {
-  const [route, setRoute] = useState<[number, number][]>([])
+  const [routeEstimate, setRouteEstimate] = useState<RouteEstimate | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [distance, setDistance] = useState<number | null>(null)
 
   useEffect(() => {
+    const controller = new AbortController()
+    let isActive = true
+
     async function fetchRoute() {
       setIsLoading(true)
       try {
-        // OSRM coordinates are [lng, lat]
-        const response = await fetch(
-          `https://router.project-osrm.org/route/v1/driving/${pickup.lng},${pickup.lat};${destination.lng},${destination.lat}?overview=full&geometries=geojson`,
+        const estimate = await fetchRouteEstimate(
+          pickup,
+          destination,
+          controller.signal,
         )
-        const data = await response.json()
-        if (data.routes && data.routes.length > 0) {
-          const coordinates = data.routes[0].geometry.coordinates.map(
-            (coord: [number, number]) => [coord[1], coord[0]],
-          )
-          setRoute(coordinates)
-          setDistance(data.routes[0].distance / 1000) // convert to km
-        }
+
+        if (!isActive) return
+
+        setRouteEstimate(estimate)
       } catch (error) {
+        if (!isActive || controller.signal.aborted) return
+
         console.error('OSRM routing error:', error)
+        setRouteEstimate(null)
       } finally {
-        setIsLoading(false)
+        if (isActive) {
+          setIsLoading(false)
+        }
       }
     }
 
     if (pickup && destination) {
       fetchRoute()
+    }
+
+    return () => {
+      isActive = false
+      controller.abort()
     }
   }, [pickup, destination])
 
@@ -97,22 +112,34 @@ export function RouteViewer({ pickup, destination }: RouteViewerProps) {
           />
           <Marker position={[pickup.lat, pickup.lng]} />
           <Marker position={[destination.lat, destination.lng]} />
-          {route.length > 0 && (
+          {routeEstimate?.routePath && routeEstimate.routePath.length > 0 && (
             <Polyline
-              positions={route}
+              positions={routeEstimate.routePath}
               color="var(--interactive-default)"
               weight={4}
               opacity={0.8}
             />
           )}
-          <MapBounds pickup={pickup} destination={destination} route={route} />
+          <MapBounds
+            pickup={pickup}
+            destination={destination}
+            route={routeEstimate?.routePath}
+          />
         </MapContainer>
       </div>
-      {distance && (
-        <div className="text-xs text-text-muted text-right">
-          Estimated route distance:{' '}
-          <span className="font-semibold text-text-primary">
-            {distance.toFixed(1)} km
+      {routeEstimate && (
+        <div className="flex items-center justify-between gap-3 text-xs text-text-muted">
+          <span>
+            Estimated route distance:{' '}
+            <span className="font-semibold text-text-primary">
+              {formatDistance(routeEstimate.distanceKm)}
+            </span>
+          </span>
+          <span>
+            Estimated travel time:{' '}
+            <span className="font-semibold text-text-primary">
+              {formatDuration(routeEstimate.durationMinutes)}
+            </span>
           </span>
         </div>
       )}

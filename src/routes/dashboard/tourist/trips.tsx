@@ -30,6 +30,8 @@ type Trip = {
   driverEmail: string
   pickupLocation: string
   destination: string
+  estimatedDistance?: number
+  estimatedDuration?: number
   agreedPrice: number
   status: string
   vehicleDetails: string
@@ -87,42 +89,64 @@ function TouristTripsPage() {
     })
   }
 
-  const renderTripDetailsAction = (item: DashboardListItem) => (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
-          View details
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Trip details</DialogTitle>
-          <DialogDescription>{item.title}</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-3 py-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-text-muted">Route</span>
-            <span className="text-sm font-medium">{item.title}</span>
+  const renderTripDetailsAction = (item: DashboardListItem) => {
+    const trip = trips?.find(
+      (candidate) => candidate.tripId.toString() === item.id,
+    )
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button size="sm" variant="outline">
+            View details
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Trip details</DialogTitle>
+            <DialogDescription>{item.title}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Route</span>
+              <span className="text-sm font-medium">{item.title}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Estimated distance</span>
+              <span className="text-sm font-medium">
+                {trip?.estimatedDistance != null
+                  ? `${trip.estimatedDistance.toFixed(1)} km`
+                  : 'Not available'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Estimated duration</span>
+              <span className="text-sm font-medium">
+                {trip?.estimatedDuration != null
+                  ? `${trip.estimatedDuration} min`
+                  : 'Not available'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Status</span>
+              <span className="text-sm font-medium">{item.status}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-muted">Date</span>
+              <span className="text-sm font-medium">{item.meta}</span>
+            </div>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-text-muted">Status</span>
-            <span className="text-sm font-medium">{item.status}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-text-muted">Date</span>
-            <span className="text-sm font-medium">{item.meta}</span>
-          </div>
-        </div>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline" type="button">
-              Close
-            </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
+                Close
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
   return (
     <DashboardShell
@@ -139,7 +163,10 @@ function TouristTripsPage() {
       )}
       {!isLoading && !isError && (
         <section className="grid gap-6 lg:grid-cols-2">
-          <DashboardListCard {...groupedTrips.upcoming} />
+          <DashboardListCard
+            {...groupedTrips.upcoming}
+            renderItemActions={renderTripDetailsAction}
+          />
           <DashboardListCard
             {...groupedTrips.completed}
             renderItemActions={renderTripDetailsAction}

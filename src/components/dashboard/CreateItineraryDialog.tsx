@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+
 import { Button } from '#/components/ui/button'
-import { Label } from '#/components/ui/label'
 import { Input } from '#/components/ui/input'
+import { Label } from '#/components/ui/label'
 import {
   Dialog,
   DialogClose,
@@ -15,6 +16,12 @@ import {
   DialogTrigger,
 } from '#/components/ui/dialog'
 import { api } from '#/lib/api/client'
+import {
+  fetchRouteEstimate,
+  formatDistance,
+  formatDuration,
+  type RouteEstimate,
+} from '#/lib/osrm'
 import { LocationSearchInput } from './LocationSearchInput'
 import { ItineraryMapPicker } from './ItineraryMapPicker'
 
@@ -33,6 +40,9 @@ export function CreateItineraryDialog({ userId }: CreateItineraryDialogProps) {
   const [open, setOpen] = useState(false)
   const [pickup, setPickup] = useState<LocationPoint>({ address: '' })
   const [destination, setDestination] = useState<LocationPoint>({ address: '' })
+  const [routeEstimate, setRouteEstimate] = useState<RouteEstimate | null>(null)
+  const [isCalculatingRoute, setIsCalculatingRoute] = useState(false)
+  const [routeError, setRouteError] = useState('')
 
   const [otherDetails, setOtherDetails] = useState({
     pickupTime: '',
@@ -41,6 +51,73 @@ export function CreateItineraryDialog({ userId }: CreateItineraryDialogProps) {
     numberOfPassengers: '1',
     specialRequests: '',
   })
+
+  useEffect(() => {
+    const hasPickupCoords =
+      typeof pickup.lat === 'number' && typeof pickup.lng === 'number'
+    const hasDestinationCoords =
+      typeof destination.lat === 'number' && typeof destination.lng === 'number'
+
+    if (!hasPickupCoords || !hasDestinationCoords) {
+      setRouteEstimate(null)
+      setRouteError('')
+      setIsCalculatingRoute(false)
+      setOtherDetails((prev) => ({
+        ...prev,
+        estimatedDistance: '',
+        estimatedDuration: '',
+      }))
+      return
+    }
+
+    const controller = new AbortController()
+    let isActive = true
+
+    async function calculateRoute() {
+      setIsCalculatingRoute(true)
+      setRouteError('')
+
+      try {
+        const estimate = await fetchRouteEstimate(
+          { lat: pickup.lat, lng: pickup.lng },
+          { lat: destination.lat, lng: destination.lng },
+          controller.signal,
+        )
+
+        if (!isActive) return
+
+        setRouteEstimate(estimate)
+        setOtherDetails((prev) => ({
+          ...prev,
+          estimatedDistance: estimate.distanceKm.toFixed(1),
+          estimatedDuration: Math.max(
+            1,
+            Math.round(estimate.durationMinutes),
+          ).toString(),
+        }))
+      } catch (error) {
+        if (!isActive || controller.signal.aborted) return
+
+        setRouteEstimate(null)
+        setRouteError(
+          error instanceof Error
+            ? error.message
+            : 'Unable to calculate route estimate',
+        )
+      } finally {
+        if (isActive) {
+          setIsCalculatingRoute(false)
+        }
+      }
+    }
+
+    void calculateRoute()
+
+    return () => {
+      isActive = false
+      controller.abort()
+    }
+  }, [destination.lat, destination.lng, pickup.lat, pickup.lng])
 
   const createItineraryMutation = useMutation({
     mutationFn: (values: any) =>
@@ -208,6 +285,24 @@ export function CreateItineraryDialog({ userId }: CreateItineraryDialogProps) {
               }
               onPointSelect={handlePointSelect}
             />
+            <div className="rounded-md border border-border-subtle bg-bg-base/50 p-3 text-xs text-text-secondary">
+              {isCalculatingRoute ? (
+                'Calculating route estimate from the selected locations...'
+              ) : routeEstimate ? (
+                <div className="grid gap-1">
+                  <span>
+                    Estimated distance: {formatDistance(routeEstimate.distanceKm)}
+                  </span>
+                  <span>
+                    Estimated duration: {formatDuration(routeEstimate.durationMinutes)}
+                  </span>
+                </div>
+              ) : routeError ? (
+                <span>{routeError}</span>
+              ) : (
+                'Select both pickup and destination to calculate the route estimate.'
+              )}
+            </div>
             <p className="text-[10px] text-text-muted">
               Tip: Finding a specific place? Use the search box. Want to
               fine-tune? Drag the markers.

@@ -118,6 +118,7 @@ export async function api<T>(
 
   if (!mergedHeaders.has('Accept')) {
     mergedHeaders.set('Accept', 'application/json')
+    mergedHeaders.set('ngrok-skip-browser-warning', 'true')
   }
 
   if (normalized.isJson && !mergedHeaders.has('Content-Type')) {

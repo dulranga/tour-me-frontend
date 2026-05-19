@@ -34,6 +34,7 @@ import { Route as DashboardAdministratorFeedbackRouteImport } from './routes/das
 import { Route as DashboardAdministratorDriversRouteImport } from './routes/dashboard/administrator/drivers'
 import { Route as DashboardAdministratorDisputesRouteImport } from './routes/dashboard/administrator/disputes'
 import { Route as DashboardAdministratorBidsRouteImport } from './routes/dashboard/administrator/bids'
+import { Route as DashboardAdminDisputesRouteImport } from './routes/dashboard/admin/disputes'
 import { Route as AuthTouristRegisterRouteImport } from './routes/auth/tourist/register'
 import { Route as AuthDriverRegisterRouteImport } from './routes/auth/driver/register'
 import { Route as AuthAdminRegisterRouteImport } from './routes/auth/admin/register'
@@ -175,6 +176,11 @@ const DashboardAdministratorBidsRoute =
     path: '/administrator/bids',
     getParentRoute: () => DashboardRoute,
   } as any)
+const DashboardAdminDisputesRoute = DashboardAdminDisputesRouteImport.update({
+  id: '/admin/disputes',
+  path: '/admin/disputes',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const AuthTouristRegisterRoute = AuthTouristRegisterRouteImport.update({
   id: '/auth/tourist/register',
   path: '/auth/tourist/register',
@@ -200,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/auth/admin/register': typeof AuthAdminRegisterRoute
   '/auth/driver/register': typeof AuthDriverRegisterRoute
   '/auth/tourist/register': typeof AuthTouristRegisterRoute
+  '/dashboard/admin/disputes': typeof DashboardAdminDisputesRoute
   '/dashboard/administrator/bids': typeof DashboardAdministratorBidsRoute
   '/dashboard/administrator/disputes': typeof DashboardAdministratorDisputesRoute
   '/dashboard/administrator/drivers': typeof DashboardAdministratorDriversRoute
@@ -230,6 +237,7 @@ export interface FileRoutesByTo {
   '/auth/admin/register': typeof AuthAdminRegisterRoute
   '/auth/driver/register': typeof AuthDriverRegisterRoute
   '/auth/tourist/register': typeof AuthTouristRegisterRoute
+  '/dashboard/admin/disputes': typeof DashboardAdminDisputesRoute
   '/dashboard/administrator/bids': typeof DashboardAdministratorBidsRoute
   '/dashboard/administrator/disputes': typeof DashboardAdministratorDisputesRoute
   '/dashboard/administrator/drivers': typeof DashboardAdministratorDriversRoute
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/auth/admin/register': typeof AuthAdminRegisterRoute
   '/auth/driver/register': typeof AuthDriverRegisterRoute
   '/auth/tourist/register': typeof AuthTouristRegisterRoute
+  '/dashboard/admin/disputes': typeof DashboardAdminDisputesRoute
   '/dashboard/administrator/bids': typeof DashboardAdministratorBidsRoute
   '/dashboard/administrator/disputes': typeof DashboardAdministratorDisputesRoute
   '/dashboard/administrator/drivers': typeof DashboardAdministratorDriversRoute
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
     | '/auth/admin/register'
     | '/auth/driver/register'
     | '/auth/tourist/register'
+    | '/dashboard/admin/disputes'
     | '/dashboard/administrator/bids'
     | '/dashboard/administrator/disputes'
     | '/dashboard/administrator/drivers'
@@ -323,6 +333,7 @@ export interface FileRouteTypes {
     | '/auth/admin/register'
     | '/auth/driver/register'
     | '/auth/tourist/register'
+    | '/dashboard/admin/disputes'
     | '/dashboard/administrator/bids'
     | '/dashboard/administrator/disputes'
     | '/dashboard/administrator/drivers'
@@ -353,6 +364,7 @@ export interface FileRouteTypes {
     | '/auth/admin/register'
     | '/auth/driver/register'
     | '/auth/tourist/register'
+    | '/dashboard/admin/disputes'
     | '/dashboard/administrator/bids'
     | '/dashboard/administrator/disputes'
     | '/dashboard/administrator/drivers'
@@ -563,6 +575,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdministratorBidsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/admin/disputes': {
+      id: '/dashboard/admin/disputes'
+      path: '/admin/disputes'
+      fullPath: '/dashboard/admin/disputes'
+      preLoaderRoute: typeof DashboardAdminDisputesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/auth/tourist/register': {
       id: '/auth/tourist/register'
       path: '/auth/tourist/register'
@@ -588,6 +607,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface DashboardRouteChildren {
+  DashboardAdminDisputesRoute: typeof DashboardAdminDisputesRoute
   DashboardAdministratorBidsRoute: typeof DashboardAdministratorBidsRoute
   DashboardAdministratorDisputesRoute: typeof DashboardAdministratorDisputesRoute
   DashboardAdministratorDriversRoute: typeof DashboardAdministratorDriversRoute
@@ -611,6 +631,7 @@ interface DashboardRouteChildren {
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAdminDisputesRoute: DashboardAdminDisputesRoute,
   DashboardAdministratorBidsRoute: DashboardAdministratorBidsRoute,
   DashboardAdministratorDisputesRoute: DashboardAdministratorDisputesRoute,
   DashboardAdministratorDriversRoute: DashboardAdministratorDriversRoute,

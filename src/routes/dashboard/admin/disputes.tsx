@@ -1,4 +1,4 @@
-dimport { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 
 import { DashboardListCard } from '#/components/dashboard/DashboardListCard'
 import { DashboardShell } from '#/components/dashboard/DashboardShell'

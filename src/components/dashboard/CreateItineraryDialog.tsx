@@ -22,6 +22,7 @@ import {
   formatDuration,
   type RouteEstimate,
 } from '#/lib/osrm'
+import { isPointInSriLanka } from '#/lib/sriLanka'
 import { LocationSearchInput } from './LocationSearchInput'
 import { ItineraryMapPicker } from './ItineraryMapPicker'
 
@@ -166,6 +167,10 @@ export function CreateItineraryDialog({ userId }: CreateItineraryDialogProps) {
     lat: number,
     lng: number,
   ) => {
+    if (!isPointInSriLanka({ lat, lng })) {
+      return
+    }
+
     // Reverse geocoding could be added here, but for now we'll use "Map Selected Location"
     // and let the user refine it via search if they want a specific address.
     const point = {

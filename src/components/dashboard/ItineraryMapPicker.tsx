@@ -7,6 +7,8 @@ import {
 } from 'react-leaflet'
 import L from 'leaflet'
 import { useEffect } from 'react'
+import { toast } from 'sonner'
+import { getSriLankaBounds, isPointInSriLanka } from '#/lib/sriLanka'
 
 // Fix for default marker icons in Leaflet with React
 // @ts-ignore
@@ -73,6 +75,11 @@ function LocationPickerEvents({
 }) {
   useMapEvents({
     click(e) {
+      if (!isPointInSriLanka(e.latlng)) {
+        toast.error('Please choose a location within Sri Lanka.')
+        return
+      }
+
       onPointSelect(nextType, e.latlng.lat, e.latlng.lng)
     },
   })
@@ -85,12 +92,15 @@ export function ItineraryMapPicker({
   onPointSelect,
 }: ItineraryMapPickerProps) {
   const nextType = !pickup ? 'pickup' : 'destination'
+  const sriLankaBounds = getSriLankaBounds()
 
   return (
     <div className="h-[300px] w-full rounded-md border border-border overflow-hidden">
       <MapContainer
         center={[6.9271, 79.8612]} // Colombo default
         zoom={10}
+        maxBounds={sriLankaBounds}
+        maxBoundsViscosity={1}
         style={{ height: '100%', width: '100%' }}
       >
         <TileLayer
@@ -105,6 +115,15 @@ export function ItineraryMapPicker({
               dragend: (e) => {
                 const marker = e.target
                 const position = marker.getLatLng()
+
+                if (!isPointInSriLanka(position)) {
+                  toast.error('Please keep locations within Sri Lanka.')
+                  if (pickup) {
+                    marker.setLatLng([pickup.lat, pickup.lng])
+                  }
+                  return
+                }
+
                 onPointSelect('pickup', position.lat, position.lng)
               },
             }}
@@ -118,6 +137,15 @@ export function ItineraryMapPicker({
               dragend: (e) => {
                 const marker = e.target
                 const position = marker.getLatLng()
+
+                if (!isPointInSriLanka(position)) {
+                  toast.error('Please keep locations within Sri Lanka.')
+                  if (destination) {
+                    marker.setLatLng([destination.lat, destination.lng])
+                  }
+                  return
+                }
+
                 onPointSelect('destination', position.lat, position.lng)
               },
             }}

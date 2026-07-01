@@ -14,7 +14,9 @@ import {
   PopoverTrigger,
 } from '#/components/ui/popover'
 import { Check, ChevronsUpDown, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { cn } from '#/lib/utils'
+import { isPointInSriLanka } from '#/lib/sriLanka'
 
 interface LocationResult {
   place_id: number
@@ -130,11 +132,15 @@ export function LocationSearchInput({
                     key={result.place_id}
                     value={result.display_name}
                     onSelect={() => {
-                      onChange(
-                        result.display_name,
-                        parseFloat(result.lat),
-                        parseFloat(result.lon),
-                      )
+                      const lat = parseFloat(result.lat)
+                      const lng = parseFloat(result.lon)
+
+                      if (!isPointInSriLanka({ lat, lng })) {
+                        toast.error('Please select a location within Sri Lanka.')
+                        return
+                      }
+
+                      onChange(result.display_name, lat, lng)
                       setQuery(result.display_name)
                       setOpen(false)
                     }}

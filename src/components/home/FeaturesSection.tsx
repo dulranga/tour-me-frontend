@@ -49,7 +49,7 @@ export function FeaturesSection() {
   ]
 
   return (
-    <section className="bg-bg-base py-12 px-4 sm:py-16 sm:px-6 lg:py-24 lg:px-8">
+    <section className="bg-bg-base py-12 px-4 sm:py-16 sm:px-6 lg:py-24 lg:px-8" id="features">
       <div className="mx-auto max-w-7xl">
         <div className="mb-16 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary mb-4">

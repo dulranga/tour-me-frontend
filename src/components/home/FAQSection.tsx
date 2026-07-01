@@ -68,7 +68,7 @@ export function FAQSection() {
   const displayedFaq = tabContent[openItem]
 
   return (
-    <section className="bg-bg-base py-12 px-4 sm:py-16 sm:px-6 lg:py-20 lg:px-8">
+    <section className="bg-bg-base py-12 px-4 sm:py-16 sm:px-6 lg:py-20 lg:px-8" id='faq'>
       <div className="mx-auto max-w-3xl">
         <div className="mb-12 sm:mb-16 text-center">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-text-primary mb-3 sm:mb-4">

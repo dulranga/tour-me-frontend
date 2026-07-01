@@ -33,7 +33,7 @@ export function HowItWorksSection() {
   ]
 
   return (
-    <section className="bg-bg-base py-16 px-4 sm:py-20 sm:px-6 lg:py-28 lg:px-8 overflow-hidden">
+    <section className="bg-bg-base py-16 px-4 sm:py-20 sm:px-6 lg:py-28 lg:px-8 overflow-hidden" id="how-it-works">
       <div className="mx-auto max-w-7xl">
         <div className="mb-16 sm:mb-20 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary mb-4">

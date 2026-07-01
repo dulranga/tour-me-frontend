@@ -188,7 +188,7 @@ function TouristDashboard() {
             items={bidsData.map((bid: any) => ({
               id: bid.bidId?.toString(),
               title: `LKR ${bid.amount}`,
-              subtitle: `Driver: ${bid.driver?.name} (${bid.driver?.vehicleDetails})`,
+              subtitle: `Driver: ${bid.driverName} | ${bid.driverEmail} (${bid.vehicleDetails})`,
               meta: bid.status,
               status: bid.status,
               statusVariant:

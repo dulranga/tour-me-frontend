@@ -113,7 +113,7 @@ function Login() {
             className="w-full"
             disabled={loginMutation.isPending}
           >
-            {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
+            {loginMutation.isPending ? 'Logging in...' : 'Login'}
           </Button>
         </form>
       </Form>
@@ -122,11 +122,11 @@ function Login() {
         <div className="mt-6">
           <FormNotice
             variant="warning"
-            title="Sign in failed"
+            title="Login failed"
             description={
               loginMutation.error instanceof Error
                 ? loginMutation.error.message
-                : 'Unable to sign in right now.'
+                : 'Unable to log in right now.'
             }
           />
         </div>

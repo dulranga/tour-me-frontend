@@ -64,12 +64,8 @@ export function HeroSection() {
 
           {/* Illustration placeholder */}
           <div className="hidden lg:flex items-center justify-center">
-            <div className="relative w-full h-80 bg-bg-elevated rounded-lg border border-border-subtle flex items-center justify-center">
-              <img
-                src="https://avatar.vercel.sh/asas"
-                alt=""
-                className="w-full h-full"
-              />
+            <div className="relative w-full h-80 bg-bg-elevated rounded-xl flex items-center justify-center">
+              <img src="/hero.png" alt="" className="w-full h-full" />
             </div>
           </div>
         </div>

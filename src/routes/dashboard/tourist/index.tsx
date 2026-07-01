@@ -127,6 +127,7 @@ function TouristDashboard() {
       toast.error(e.message || 'Failed to accept bid')
     },
   })
+  console.log(bidsData)
 
   return (
     <DashboardShell

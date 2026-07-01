@@ -176,6 +176,7 @@ export function CreateItineraryDialog({ userId }: CreateItineraryDialogProps) {
     if (type === 'pickup') setPickup(point)
     else setDestination(point)
   }
+  const today = new Date().toISOString().slice(0, 16)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -213,6 +214,7 @@ export function CreateItineraryDialog({ userId }: CreateItineraryDialogProps) {
               <Input
                 id="pickup-time"
                 type="datetime-local"
+                min={today}
                 value={otherDetails.pickupTime}
                 onChange={(e) =>
                   setOtherDetails((prev) => ({
@@ -291,10 +293,12 @@ export function CreateItineraryDialog({ userId }: CreateItineraryDialogProps) {
               ) : routeEstimate ? (
                 <div className="grid gap-1">
                   <span>
-                    Estimated distance: {formatDistance(routeEstimate.distanceKm)}
+                    Estimated distance:{' '}
+                    {formatDistance(routeEstimate.distanceKm)}
                   </span>
                   <span>
-                    Estimated duration: {formatDuration(routeEstimate.durationMinutes)}
+                    Estimated duration:{' '}
+                    {formatDuration(routeEstimate.durationMinutes)}
                   </span>
                 </div>
               ) : routeError ? (

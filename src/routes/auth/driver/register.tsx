@@ -223,7 +223,7 @@ function DriverRegister() {
                 name="vehicleMake"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Make</FormLabel>
+                    <FormLabel>Brand</FormLabel>
                     <FormControl>
                       <Input placeholder="Toyota" {...field} />
                     </FormControl>

@@ -25,16 +25,6 @@ export const touristNavItems: DashboardNavItem[] = [
     to: '/dashboard/tourist/trips',
     description: 'Upcoming and past trips',
   },
-  {
-    label: 'Messages',
-    to: '/dashboard/tourist/messages',
-    description: 'Driver conversations',
-  },
-  {
-    label: 'Receipts',
-    to: '/dashboard/tourist/receipts',
-    description: 'Upload and track receipts',
-  },
 ]
 
 export const driverNavItems: DashboardNavItem[] = [
@@ -57,11 +47,6 @@ export const driverNavItems: DashboardNavItem[] = [
     label: 'Trips',
     to: '/dashboard/driver/trips',
     description: 'Accepted assignments',
-  },
-  {
-    label: 'Messages',
-    to: '/dashboard/driver/messages',
-    description: 'Tourist conversations',
   },
   {
     label: 'Verification',

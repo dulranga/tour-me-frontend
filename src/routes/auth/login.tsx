@@ -75,7 +75,7 @@ function Login() {
   }
 
   return (
-    <AuthLayout kicker="TourMe" title="Login in" description="Welcome back">
+    <AuthLayout kicker="TourMe" title="Login" description="Welcome back">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField

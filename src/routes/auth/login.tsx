@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -22,6 +22,7 @@ import { loginSchema } from '#/components/auth/schemas'
 import { useAuth } from '#/lib/AuthContext'
 import { UserRole } from '#/lib/auth'
 import type { LoginValues } from '#/components/auth/schemas'
+import { Separator } from '#/components/ui/separator'
 
 export const Route = createFileRoute('/auth/login')({
   component: Login,
@@ -74,7 +75,7 @@ function Login() {
   }
 
   return (
-    <AuthLayout kicker="TourMe" title="Sign in" description="Welcome back">
+    <AuthLayout kicker="TourMe" title="Login in" description="Welcome back">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -130,6 +131,20 @@ function Login() {
           />
         </div>
       ) : null}
+
+      <Separator className="my-5 relative">
+        <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 text-neutral-400 bg-card px-2">
+          or
+        </div>
+      </Separator>
+      <div className="flex divide-x w-fit mx-auto">
+        <Link className="px-5" to="/auth/driver/register">
+          Become a Driver
+        </Link>
+        <Link className="px-5" to="/auth/tourist/register">
+          Become a Tourist
+        </Link>
+      </div>
     </AuthLayout>
   )
 }

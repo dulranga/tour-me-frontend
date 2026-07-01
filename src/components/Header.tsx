@@ -32,10 +32,10 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await logout()
+      await navigate({ to: '/' })
       await queryClient.invalidateQueries()
       closeMenu()
       toast.success('Logged out successfully')
-      await navigate({ to: '/' })
     } catch (error) {
       toast.error('Failed to logout')
     }
@@ -83,7 +83,7 @@ export default function Header() {
             {!user && (
               <Link to="/auth/login" className="hidden lg:block mr-2">
                 <Button variant="ghost" size="sm" className="font-medium">
-                  Sign In
+                  Login
                 </Button>
               </Link>
             )}

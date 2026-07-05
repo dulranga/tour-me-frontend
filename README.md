@@ -1,209 +1,175 @@
-Welcome to your new TanStack Start app!
+# TourMe Frontend
 
-# Getting Started
+A platform connecting tourists with reliable drivers. Create itineraries, get competitive bids, and travel with confidence.
 
-To run this application:
+## What is this project?
 
-```bash
-npm install
-npm run dev
-```
+This is the frontend for **TourMe**, a multi-role platform that allows:
 
-# Building For Production
+- **Tourists**: Create itineraries, receive driver bids, manage trips, view receipts
+- **Drivers**: Bid on tourist requests, manage trip schedules, verify vehicles
+- **Admins**: Oversee disputes, manage users, monitor all activity
 
-To build this application for production:
+### Key Features
 
-```bash
-npm run build
-```
+- Multi-role authentication (Tourist, Driver, Admin)
+- Real-time bidding system for trips
+- Dashboard interfaces for each user role
+- Map integration for route visualization
+- Secure payment and dispute management
 
-## Testing
+## How to Run It
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+1. **Install dependencies**:
 
-```bash
-npm run test
-```
+   ```bash
+   npm install
+   ```
 
-## Styling
+2. **Start development server**:
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+   ```bash
+   npm run dev
+   ```
 
-### Removing Tailwind CSS
+   - Runs on port `8012` by default
+   - Requires backend API running at `http://localhost:8010`
 
-If you prefer not to use Tailwind CSS:
+3. **Build for production**:
 
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
+   ```bash
+   npm run build
+   ```
 
-## Linting & Formatting
+4. **Preview production build**:
+   ```bash
+   npm run preview
+   ```
 
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
+## How to Make Changes
 
-```bash
-npm run lint
-npm run format
-npm run check
-```
+### Adding New Routes
 
-## Shadcn
+Routes use file-based routing with TanStack Router. To add a new page:
 
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
+1. Create a `.tsx` file in `src/routes/` (e.g., `new-page.tsx`)
+2. Export a route using `createFileRoute`
+3. The route will be automatically available at `/new-page`
 
-```bash
-pnpm dlx shadcn@latest add button
-```
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from '@tanstack/react-router'
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
+Example:
 
 ```tsx
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
+export const Route = createFileRoute('/new-page')({
+  component: NewPageComponent,
 })
 
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
+function NewPageComponent() {
+  return <div>New Page</div>
 }
 ```
 
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
+### Adding Components
 
-# Demo files
+- Place reusable UI in `src/components/`
+- Follow existing naming conventions (e.g., ` HeroSection.tsx`, `DashboardShell.tsx`)
+- Use Tailwind CSS for styling
+- Check `src/components/ui/` for pre-built UI primitives
 
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
+### Modifying Authentication
 
-# Learn More
+- Edit `src/lib/auth.ts` for auth logic
+- Dashboard redirects are handled in `src/routes/dashboard.tsx`
 
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+## Architecture & Folder Structure
 
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+```
+src/
+├── routes/                 # File-based routing (each file = a route)
+│   ├── index.tsx          # Home page
+│   ├── dashboard.tsx      # Dashboard layout & redirects
+│   ├── about.tsx          # Static pages
+│   └── dashboard/         # Role-specific dashboards
+│       ├── tourist/       # Tourist dashboard routes
+│       ├── driver/        # Driver dashboard routes
+│       └── admin/         # Admin dashboard routes
+├── components/            # Reusable UI components
+│   ├── home/             # Landing page sections
+│   ├── dashboard/        # Dashboard-specific components
+│   ├── auth/             # Authentication forms
+│   └── ui/               # UI primitives (Button, Card, Dialog)
+├── lib/                  # Core application logic
+│   ├── api/              # API client functions
+│   ├── auth.ts           # Authentication utilities
+│   └── utils.ts          # Helper functions
+└── styles.css            # Tailwind CSS imports
+```
+
+### Key Files
+
+| File                      | Purpose                         |
+| ------------------------- | ------------------------------- |
+| `src/router.tsx`          | Router configuration            |
+| `src/routes/__root.tsx`   | Root layout (HTML structure)    |
+| `src/lib/api/client.ts`   | API request utilities           |
+| `src/lib/AuthContext.tsx` | Authentication context provider |
+
+## Development Guidelines
+
+### Available Scripts
+
+```bash
+npm run dev      # Start development server
+npm run build    # Production build
+npm run preview  # Preview production build
+npm run test     # Run tests (Vitest)
+npm run lint     # Run ESLint
+npm run format   # Check Prettier formatting
+npm run check    # Format and fix with Prettier + ESLint
+```
+
+### Code Quality
+
+- Run `npm run check` before committing
+- Tests use Vitest with React Testing Library
+- Follow existing code patterns and naming conventions
+
+### Environment Variables
+
+Configure in `.env`:
+
+```
+VITE_API_BASE_URL=http://localhost:8010
+```
+
+## Dependencies
+
+### Main
+
+- React 19, React DOM 19
+- TanStack Router (file-based routing)
+- TanStack Query (data fetching)
+- Tailwind CSS (styling)
+- Radix UI (accessible UI primitives)
+- Leaflet (maps)
+- Zod (validation)
+
+### Development
+
+- TypeScript, Vite, ESLint, Prettier
+- Vitest (testing)
+
+## Notes for Contributors
+
+1. **API Integration**: The frontend expects a backend API at `VITE_API_BASE_URL`
+2. **Role-based Access**: Dashboards redirect based on user role (tourist/driver/admin)
+3. **Map Features**: Uses OSRM for routing (see `src/lib/osrm.ts`)
+4. **UI Components**: Built with Radix UI primitives + Tailwind
+5. **File Structure**: Do not modify auto-generated files like `routeTree.gen.ts`
+
+## Learn More
+
+- [TanStack Router Documentation](https://tanstack.com/router)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Shadcn UI Components](https://ui.shadcn.com/)
